@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DashboardView: View {
+struct MenuBarView: View {
   @ObservedObject var engine: MouseEngine
   @ObservedObject var preferences: Preferences
 
@@ -16,7 +16,7 @@ struct DashboardView: View {
             .buttonStyle(.borderedProminent).controlSize(.large)
             .tint(.purple).frame(maxWidth: .infinity)
         } else {
-          SettingsLink { Text(engine.trusted ? "Reconnect…" : "Enable Accessibility…") }
+          OpenSettingsButton(title: engine.trusted ? "Reconnect…" : "Enable Accessibility…")
             .buttonStyle(.borderedProminent).tint(.purple)
         }
       }.padding(.vertical, 6)
@@ -43,7 +43,7 @@ struct DashboardView: View {
       Text("Kbd Mouse").font(.headline)
       HStack {
         Menu {
-          SettingsLink { Label("Settings…", systemImage: "gearshape") }.keyboardShortcut(",")
+          OpenSettingsButton(title: "Settings…").keyboardShortcut(",")
           Divider()
           Button("Quit Kbd Mouse") {
             engine.shutdown()

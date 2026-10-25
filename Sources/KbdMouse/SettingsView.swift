@@ -10,10 +10,21 @@ struct SettingsView: View {
   @StateObject private var bindingEditor = KeyBindingEditor()
 
   var body: some View {
-    TabView(selection: $selectedPane) {
-      pane { general }.tabItem { Label("General", systemImage: "gearshape") }.tag("general")
-      pane { controls }.tabItem { Label("Controls", systemImage: "command") }.tag("controls")
-      pane { motion }.tabItem { Label("Motion", systemImage: "speedometer") }.tag("motion")
+    pane {
+      switch selectedPane {
+      case "controls": controls
+      case "motion": motion
+      default: general
+      }
+    }
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        HStack(spacing: 8) {
+          paneButton("General", id: "general", symbol: "gearshape")
+          paneButton("Controls", id: "controls", symbol: "command")
+          paneButton("Motion", id: "motion", symbol: "speedometer")
+        }
+      }
     }
     .frame(width: 500, height: 590)
     .onAppear {
@@ -26,6 +37,24 @@ struct SettingsView: View {
         engine.refreshPermission()
       }
     }
+  }
+
+  private func paneButton(_ title: String, id: String, symbol: String) -> some View {
+    Button {
+      selectedPane = id
+    } label: {
+      VStack(spacing: 4) {
+        Image(systemName: symbol).font(.system(size: 22))
+        Text(title).font(.callout)
+      }
+      .frame(width: 68, height: 50)
+      .foregroundStyle(selectedPane == id ? Color.accentColor : Color.secondary)
+      .background(
+        selectedPane == id ? Color.primary.opacity(0.06) : .clear,
+        in: RoundedRectangle(cornerRadius: 8))
+    }
+    .buttonStyle(.plain)
+    .accessibilityValue(selectedPane == id ? "Selected" : "")
   }
 
   private func pane<Content: View>(@ViewBuilder content: () -> Content) -> some View {

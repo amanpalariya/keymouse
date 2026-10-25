@@ -16,16 +16,19 @@ struct KbdMouseApp: App {
   }
 
   var body: some Scene {
-    Window("Kbd Mouse", id: "main") {
-      AppWindow(preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate)
+    Window("Kbd Mouse Settings", id: "settings") {
+      SettingsWindow(
+        preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate)
     }
     .windowResizability(.contentSize)
-    .windowStyle(.hiddenTitleBar)
-    Settings {
-      SettingsView(preferences: preferences, engine: engine, loginItem: loginItem)
+    .windowToolbarStyle(.expanded)
+    .commands {
+      CommandGroup(replacing: .appSettings) {
+        OpenSettingsButton(title: "Settings…").keyboardShortcut(",")
+      }
     }
     MenuBarExtra(isInserted: $showMenuBarIcon) {
-      MenuBarPanel(engine: engine, preferences: preferences)
+      MenuBarView(engine: engine, preferences: preferences)
     } label: {
       Image(nsImage: BrandArtwork.symbol(size: 20, template: true))
         .accessibilityLabel("Kbd Mouse")
@@ -42,7 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   var reopenWindow: (() -> Void)?
 
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
-    if !hasVisibleWindows { reopenWindow?() }
+    reopenWindow?()
     return true
   }
 
@@ -50,7 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   func applicationWillTerminate(_ notification: Notification) { engine?.shutdown() }
 }
 
-private struct AppWindow: View {
+private struct SettingsWindow: View {
   let preferences: Preferences
   let engine: MouseEngine
   @ObservedObject var loginItem: LoginItem
@@ -58,10 +61,13 @@ private struct AppWindow: View {
   @Environment(\.openWindow) private var openWindow
 
   var body: some View {
-    DashboardView(engine: engine, preferences: preferences)
+    SettingsView(preferences: preferences, engine: engine, loginItem: loginItem)
       .onAppear {
         delegate.engine = engine
-        delegate.reopenWindow = { openWindow(id: "main") }
+        delegate.reopenWindow = {
+          openWindow(id: "settings")
+          NSApp.activate(ignoringOtherApps: true)
+        }
         engine.start()
         loginItem.configureDefault()
       }
