@@ -74,12 +74,16 @@ final class MenuBarController: NSObject, ObservableObject {
     let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     if let button = item.button {
       button.image = BrandArtwork.symbol(size: 20, template: true)
-      // A status button is momentary by default; show its selected background too.
-      (button.cell as? NSButtonCell)?.showsStateBy = [.changeBackgroundCellMask]
       button.setAccessibilityLabel("Key Mouse")
       button.toolTip = "Key Mouse"
-      button.target = self
-      button.action = #selector(togglePanel)
+      if #available(macOS 27, *) {
+        // Let the menu bar own selection, tracking, and keyboard navigation.
+        item.expandedInterfaceDelegate = self
+      } else {
+        (button.cell as? NSButtonCell)?.showsStateBy = [.changeBackgroundCellMask]
+        button.target = self
+        button.action = #selector(togglePanel)
+      }
     }
     statusItem = item
   }
@@ -89,9 +93,16 @@ final class MenuBarController: NSObject, ObservableObject {
       closePanel()
       return
     }
+    showPanel()
+  }
+
+  private func showPanel() {
     guard let button = statusItem?.button, let window = button.window,
       let screen = window.screen
-    else { return }
+    else {
+      closePanel()
+      return
+    }
     preparePanel()
     let anchor = window.convertToScreen(button.convert(button.bounds, to: nil))
     let size = hostingView?.fittingSize ?? panel.frame.size
@@ -100,11 +111,13 @@ final class MenuBarController: NSObject, ObservableObject {
     let y = max(bounds.minY, anchor.minY - 6 - size.height)
     panel.setFrame(NSRect(origin: NSPoint(x: x, y: y), size: size), display: false)
     panel.makeKeyAndOrderFront(nil)
-    button.state = .on
-    // Mouse tracking clears the pressed highlight after the action returns.
-    DispatchQueue.main.async { [weak self] in
-      guard let self else { return }
-      self.statusItem?.button?.highlight(self.panel.isVisible)
+    if #unavailable(macOS 27) {
+      button.state = .on
+      // Mouse tracking clears the pressed highlight after the action returns.
+      DispatchQueue.main.async { [weak self] in
+        guard let self else { return }
+        self.statusItem?.button?.highlight(self.panel.isVisible)
+      }
     }
     installDismissalMonitors()
   }
@@ -133,9 +146,18 @@ final class MenuBarController: NSObject, ObservableObject {
   }
 
   private func closePanel() {
+    if #available(macOS 27, *) {
+      statusItem?.expandedInterfaceSession?.cancel()
+    }
+    hidePanel()
+  }
+
+  private func hidePanel() {
     panel.orderOut(nil)
-    statusItem?.button?.state = .off
-    statusItem?.button?.highlight(false)
+    if #unavailable(macOS 27) {
+      statusItem?.button?.state = .off
+      statusItem?.button?.highlight(false)
+    }
     if let localMonitor { NSEvent.removeMonitor(localMonitor) }
     if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
     localMonitor = nil
@@ -145,6 +167,20 @@ final class MenuBarController: NSObject, ObservableObject {
   deinit {
     if let localMonitor { NSEvent.removeMonitor(localMonitor) }
     if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
+  }
+}
+
+@available(macOS 27, *)
+extension MenuBarController: NSStatusItemExpandedInterfaceDelegate {
+  func statusItem(
+    _ statusItem: NSStatusItem,
+    didBegin expandedInterfaceSession: NSStatusItemExpandedInterfaceSession
+  ) {
+    showPanel()
+  }
+
+  func statusItemDidEndExpandedInterfaceSession(_ statusItem: NSStatusItem, animated: Bool) {
+    hidePanel()
   }
 }
 
