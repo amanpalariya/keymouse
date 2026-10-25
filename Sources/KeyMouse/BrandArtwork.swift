@@ -41,21 +41,17 @@ enum BrandArtwork {
     frame.windingRule = .evenOdd
     frame.append(
       NSBezierPath(
-        roundedRect: NSRect(x: 5, y: 7, width: 22, height: 20), xRadius: 4, yRadius: 4))
+        roundedRect: NSRect(x: 4.4, y: 5.8, width: 23.2, height: 21.8), xRadius: 4.6, yRadius: 4.6))
     frame.fill()
-    color.setStroke()
-    let cursor = cursorPath()
-    cursor.lineWidth = 1.5
-    cursor.lineJoinStyle = .round
-    cursor.stroke()
+    cursorPath().fill()
   }
 
   private static func cursorPath() -> NSBezierPath {
     let path = NSBezierPath()
     path.move(to: CGPoint(x: 11, y: 24))
     for point in [
-      CGPoint(x: 22, y: 16), CGPoint(x: 17.6, y: 15.5), CGPoint(x: 19.6, y: 11.5),
-      CGPoint(x: 17.5, y: 10.5), CGPoint(x: 15.4, y: 14.5), CGPoint(x: 11, y: 11),
+      CGPoint(x: 22, y: 16), CGPoint(x: 17, y: 15.4), CGPoint(x: 19.3, y: 10.7),
+      CGPoint(x: 16.8, y: 9.5), CGPoint(x: 14.5, y: 14.2), CGPoint(x: 11, y: 10.8),
     ] { path.line(to: point) }
     path.close()
     return path
