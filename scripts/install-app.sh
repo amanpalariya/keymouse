@@ -11,4 +11,6 @@ if [[ -e "$APP" ]]; then
   fi
 fi
 ditto "dist/Key Mouse.app" "$APP"
+touch "$APP"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$APP"
 print "Installed $APP"

@@ -8,7 +8,8 @@ enum BrandArtwork {
   {
     let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
       let transform = NSAffineTransform()
-      transform.scale(by: rect.width / 32)
+      transform.scale(by: rect.width / 28)
+      transform.translateX(by: -2, yBy: -2)
       transform.concat()
       drawOutline(color: color)
       return true
