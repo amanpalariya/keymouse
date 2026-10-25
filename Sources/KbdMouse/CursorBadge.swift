@@ -4,10 +4,22 @@ final class CursorBadge {
   private var panel: NSPanel?
   private var imageView: NSImageView?
   private var scrollMode = false
+  private var lastOrigin: CGPoint?
 
   func show(at point: CGPoint, scrolling: Bool) {
     if panel == nil { createPanel(scrolling: scrolling) }
     if scrolling != scrollMode { setSymbol(scrolling) }
+    let origin = badgeOrigin(for: point)
+    if origin != lastOrigin {
+      panel?.setFrame(
+        NSRect(origin: origin, size: NSSize(width: 28, height: 24)),
+        display: false, animate: false)
+      lastOrigin = origin
+    }
+    if panel?.isVisible == false { panel?.orderFrontRegardless() }
+  }
+
+  private func badgeOrigin(for point: CGPoint) -> CGPoint {
     // CGEvent uses a top-left origin; AppKit uses the primary screen's bottom-left.
     let top = NSScreen.screens.first?.frame.maxY ?? 0
     var origin = CGPoint(x: point.x + 18, y: top - point.y - 32)
@@ -16,9 +28,11 @@ final class CursorBadge {
     }) {
       origin.x = min(max(origin.x, screen.frame.minX), screen.frame.maxX - 28)
       origin.y = min(max(origin.y, screen.frame.minY), screen.frame.maxY - 24)
+      let scale = screen.backingScaleFactor
+      origin.x = (origin.x * scale).rounded() / scale
+      origin.y = (origin.y * scale).rounded() / scale
     }
-    panel?.setFrameOrigin(origin)
-    if panel?.isVisible == false { panel?.orderFrontRegardless() }
+    return origin
   }
   private func createPanel(scrolling: Bool) {
     let panel = NSPanel(
@@ -26,7 +40,9 @@ final class CursorBadge {
       styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
     panel.isOpaque = false
     panel.backgroundColor = .clear
-    panel.hasShadow = true
+    panel.hasShadow = false
+    panel.animationBehavior = .none
+    panel.hidesOnDeactivate = false
     panel.ignoresMouseEvents = true
     panel.level = .screenSaver
     panel.collectionBehavior = [

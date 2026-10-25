@@ -12,7 +12,10 @@ final class KeyboardEventTap {
   func start(handler: @escaping Handler) {
     guard port == nil else { return }
     self.handler = handler
-    let types: [CGEventType] = [.keyDown, .keyUp, .flagsChanged]
+    let types: [CGEventType] = [
+      .keyDown, .keyUp, .flagsChanged,
+      .mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged,
+    ]
     let mask = types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << $1.rawValue) }
     port = CGEvent.tapCreate(
       tap: .cgSessionEventTap, place: .headInsertEventTap,

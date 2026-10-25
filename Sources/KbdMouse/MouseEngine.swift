@@ -9,27 +9,43 @@ final class MouseEngine: ObservableObject {
   @Published private(set) var scrolling = false
   let preferences: Preferences
   private let eventTap = KeyboardEventTap()
-  private var timer: Timer?
   private var permissionTimer: Timer?
   private var subscriptions = Set<AnyCancellable>()
   private var observers: [NSObjectProtocol] = []
   private var input = InputState()
   private var activation = ActivationState()
-  private var lastTick = ProcessInfo.processInfo.systemUptime
   private var lastInteraction = ProcessInfo.processInfo.systemUptime
   private let badge = CursorBadge()
   private let pointer = PointerOutput()
+  private lazy var frames = DisplayRefreshLoop { [weak self] elapsed in
+    self?.tick(elapsed: elapsed)
+  }
 
   init(preferences: Preferences) {
     self.preferences = preferences
   }
 
   func start() {
-    guard timer == nil else { return }
+    guard permissionTimer == nil else { return }
     observeConfiguration()
     observeSessionChanges()
-    startTimers()
+    startPermissionPolling()
+    observeDisplayChanges()
     refreshPermission()
+  }
+
+  private func observeDisplayChanges() {
+    pointer.refreshDisplays()
+    observers.append(
+      NotificationCenter.default.addObserver(
+        forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
+      ) { [weak self] _ in
+        self?.pointer.refreshDisplays()
+        self?.frames.stop()
+        if let self, self.active, let point = self.pointer.position {
+          self.frames.followCursor(at: point)
+        }
+      })
   }
 
   private func observeConfiguration() {
@@ -53,16 +69,12 @@ final class MouseEngine: ObservableObject {
     }
   }
 
-  private func startTimers() {
+  private func startPermissionPolling() {
     let permissionTimer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
       self?.refreshPermission()
     }
     RunLoop.main.add(permissionTimer, forMode: .common)
     self.permissionTimer = permissionTimer
-    let timer = Timer(timeInterval: 1 / 120, repeats: true) { [weak self] _ in self?.tick() }
-    timer.tolerance = 0.002
-    RunLoop.main.add(timer, forMode: .common)
-    self.timer = timer
   }
 
   func requestPermission() {
@@ -106,7 +118,12 @@ final class MouseEngine: ObservableObject {
     guard connected else { return }
     active = true
     lastInteraction = ProcessInfo.processInfo.systemUptime
-    lastTick = lastInteraction
+    guard let point = CGEvent(source: nil)?.location else {
+      active = false
+      return
+    }
+    pointer.synchronize(to: point)
+    frames.followCursor(at: point)
     updateBadge()
   }
   func deactivate() {
@@ -115,6 +132,7 @@ final class MouseEngine: ObservableObject {
       pointer.postButton(button, down: false)
     }
     input.clear()
+    frames.stop()
     pointer.resetScroll()
     active = false
     scrolling = false
@@ -123,12 +141,13 @@ final class MouseEngine: ObservableObject {
   func shutdown() {
     deactivate()
     eventTap.stop()
-    timer?.invalidate()
-    timer = nil
     permissionTimer?.invalidate()
     permissionTimer = nil
     subscriptions.removeAll()
-    for observer in observers { NSWorkspace.shared.notificationCenter.removeObserver(observer) }
+    for observer in observers {
+      NSWorkspace.shared.notificationCenter.removeObserver(observer)
+      NotificationCenter.default.removeObserver(observer)
+    }
     observers.removeAll()
   }
 
@@ -140,6 +159,10 @@ final class MouseEngine: ObservableObject {
       return false
     }
     guard event.getIntegerValueField(.eventSourceUserData) != PointerOutput.eventMarker else {
+      return false
+    }
+    if [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged].contains(type) {
+      pointer.synchronize(to: event.location)
       return false
     }
     if type == .flagsChanged {
@@ -194,24 +217,24 @@ final class MouseEngine: ObservableObject {
     return true
   }
 
-  private func tick() {
+  private func tick(elapsed: TimeInterval) {
     guard active else { return }
     let now = ProcessInfo.processInfo.systemUptime
-    let dt = min(0.05, max(0, now - lastTick))
-    lastTick = now
     let config = preferences.configuration
     if !input.pressed.isEmpty { lastInteraction = now }
     if config.timeoutEnabled && now - lastInteraction >= config.idleTimeout {
       deactivate()
       return
     }
-    scrolling = input.contains(.scroll)
-    pointer.update(input: input, configuration: config, elapsed: dt)
+    let isScrolling = input.contains(.scroll)
+    if scrolling != isScrolling { scrolling = isScrolling }
+    pointer.update(input: input, configuration: config, elapsed: elapsed)
+    if let point = pointer.position { frames.followCursor(at: point) }
     updateBadge()
   }
 
   private func updateBadge() {
-    guard preferences.configuration.showBadge, let point = CGEvent(source: nil)?.location else {
+    guard preferences.configuration.showBadge, let point = pointer.position else {
       badge.hide()
       return
     }

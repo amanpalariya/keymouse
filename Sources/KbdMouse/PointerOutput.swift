@@ -5,10 +5,20 @@ final class PointerOutput {
   static let eventMarker: Int64 = 0x4B42_444D
   private let source = CGEventSource(stateID: .hidSystemState)
   private var scrollRemainder = CGVector.zero
+  private var motion = CursorMotion()
+  private var displays: [CGRect] = []
   private var clickCounts: [UInt32: Int64] = [:]
   private var lastClicks: [UInt32: (time: TimeInterval, point: CGPoint)] = [:]
 
   func resetScroll() { scrollRemainder = .zero }
+
+  var position: CGPoint? { motion.position }
+
+  func synchronize(to point: CGPoint) { motion.synchronize(to: point) }
+
+  func refreshDisplays() {
+    displays = NSScreen.screens.compactMap(\.displayID).map { CGDisplayBounds($0) }
+  }
 
   func update(input: InputState, configuration config: Configuration, elapsed dt: TimeInterval) {
     let multiplier = input.speedMultiplier(config)
@@ -40,18 +50,14 @@ final class PointerOutput {
 
   private func move(input: InputState, distance: Double) {
     let direction = input.direction
-    guard direction != .zero, let current = CGEvent(source: nil)?.location else { return }
-    let next = clamped(
-      CGPoint(
-        x: current.x + direction.dx * distance,
-        y: current.y + direction.dy * distance))
+    guard direction != .zero,
+      let next = motion.advance(direction: direction, distance: distance, displays: displays)
+    else { return }
     let button = heldButton(in: input)
     let type = movementType(for: button)
     let event = CGEvent(
       mouseEventSource: source, mouseType: type, mouseCursorPosition: next,
       mouseButton: button ?? .left)
-    event?.setIntegerValueField(.mouseEventDeltaX, value: Int64((next.x - current.x).rounded()))
-    event?.setIntegerValueField(.mouseEventDeltaY, value: Int64((next.y - current.y).rounded()))
     post(event)
   }
 
@@ -68,21 +74,8 @@ final class PointerOutput {
     }
   }
 
-  private func clamped(_ point: CGPoint) -> CGPoint {
-    let bounds = NSScreen.screens.compactMap { screen -> CGRect? in
-      guard let id = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? UInt32
-      else { return nil }
-      return CGDisplayBounds(id)
-    }
-    if bounds.contains(where: { $0.contains(point) }) { return point }
-    return bounds.map {
-      CGPoint(
-        x: min(max(point.x, $0.minX), $0.maxX - 1), y: min(max(point.y, $0.minY), $0.maxY - 1))
-    }.min { hypot($0.x - point.x, $0.y - point.y) < hypot($1.x - point.x, $1.y - point.y) } ?? point
-  }
-
   func postButton(_ button: CGMouseButton, down: Bool) {
-    guard let point = CGEvent(source: nil)?.location else { return }
+    guard let point = position else { return }
     let type: CGEventType
     switch button {
     case .left: type = down ? .leftMouseDown : .leftMouseUp
