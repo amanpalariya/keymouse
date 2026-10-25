@@ -11,7 +11,7 @@ struct AccessibilitySetupView: View {
             PreferenceIcon(symbol: "hand.raised.fill", color: .blue)
             Text("Accessibility").font(.headline)
           }
-          Text("Allow Key Mouse to move and click the pointer.")
+          Text("Allow KeyMouse to move and click the pointer.")
           Text("Enable it in System Settings → Privacy & Security → Accessibility.")
             .font(.callout).foregroundStyle(.secondary)
           HStack {

@@ -96,7 +96,7 @@ final class MenuBarController: NSObject, ObservableObject {
   private func updateStatusAppearance(active: Bool) {
     guard let button = statusItem?.button else { return }
     button.image = active ? activeImage : inactiveImage
-    let description = active ? "Key Mouse — Active" : "Key Mouse — Inactive"
+    let description = active ? "KeyMouse — Active" : "KeyMouse — Inactive"
     button.setAccessibilityLabel(description)
     button.toolTip = description
   }
@@ -209,7 +209,7 @@ private final class MenuBarPanel: NSPanel {
     collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
     isReleasedWhenClosed = false
     animationBehavior = .utilityWindow
-    setAccessibilityLabel("Key Mouse")
+    setAccessibilityLabel("KeyMouse")
   }
 
   override var canBecomeKey: Bool { true }

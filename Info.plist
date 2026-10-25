@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleIdentifier</key><string>com.aman.keymouse</string>
-    <key>CFBundleName</key><string>Key Mouse</string>
-    <key>CFBundleDisplayName</key><string>Key Mouse</string>
+    <key>CFBundleName</key><string>KeyMouse</string>
+    <key>CFBundleDisplayName</key><string>KeyMouse</string>
     <key>CFBundleExecutable</key><string>KeyMouse</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>1.0.0</string>

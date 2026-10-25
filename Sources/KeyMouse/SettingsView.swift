@@ -110,7 +110,7 @@ struct SettingsView: View {
         }
       }
       HStack {
-        Text("Key Mouse · 1.0").foregroundStyle(.tertiary)
+        Text("KeyMouse · 1.0").foregroundStyle(.tertiary)
         Spacer()
         ResetButton(title: "Reset All Settings") { preferences.configuration = Configuration() }
       }.font(.caption)

@@ -49,12 +49,12 @@ struct MenuBarView: View {
 
   private var header: some View {
     ZStack {
-      Text("Key Mouse").font(.headline)
+      Text("KeyMouse").font(.headline)
       HStack {
         Menu {
           Button("Settings…", action: openSettings).keyboardShortcut(",")
           Divider()
-          Button("Quit Key Mouse") {
+          Button("Quit KeyMouse") {
             engine.shutdown()
             NSApp.terminate(nil)
           }.keyboardShortcut("q")

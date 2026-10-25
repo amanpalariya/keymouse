@@ -1,17 +1,17 @@
-# Key Mouse
+# KeyMouse
 
 Native macOS app with keyboard pointer controls and a menu bar shortcut. macOS 14 or later; no dependencies.
 
 ```sh
 ./scripts/install-app.sh
-open "/Applications/Key Mouse.app"
+open "/Applications/KeyMouse.app"
 ```
 
-Launching the app opens Settings. The menu bar icon opens the cursor controls. Click **Allow Access**, then turn on **Key Mouse** in System Settings → Privacy & Security → Accessibility. If it is missing, use **+** to select it from Applications. The app checks access automatically. If a locally rebuilt app is already enabled but still unavailable, remove its old entry with **−**, then use **+** to add the current copy from Applications.
+Launching the app opens Settings. The menu bar icon opens the cursor controls. Click **Allow Access**, then turn on **KeyMouse** in System Settings → Privacy & Security → Accessibility. If it is missing, use **+** to select it from Applications. The app checks access automatically. If a locally rebuilt app is already enabled but still unavailable, remove its old entry with **−**, then use **+** to add the current copy from Applications.
 
 **Launch at login** is enabled on first launch. Turn it off in General settings. macOS may require approval in Login Items; the app shows a link when needed. Later changes made in macOS Settings are respected.
 
-Open Key Mouse from Applications or the Dock at any time, even when its menu bar icon is hidden. Enable **Show in menu bar** in General settings to restore it. Closing the window keeps keyboard controls running; use **Quit** to exit.
+Open KeyMouse from Applications or the Dock at any time, even when its menu bar icon is hidden. Enable **Show in menu bar** in General settings to restore it. Closing the window keeps keyboard controls running; use **Quit** to exit.
 
 Double-tap **Option** to toggle keyboard control. **Escape** cancels; 30 seconds of inactivity also stops it. Change these in Settings.
 

@@ -3,7 +3,7 @@ set -euo pipefail
 cd "${0:A:h:h}"
 swift build -c release
 BIN_DIR="$(swift build -c release --show-bin-path)"
-APP="$PWD/dist/Key Mouse.app"
+APP="$PWD/dist/KeyMouse.app"
 mkdir -p "$APP/Contents/MacOS"
 mkdir -p "$APP/Contents/Resources"
 swiftc -parse-as-library scripts/render-icon.swift -o .build/render-icon

@@ -19,7 +19,7 @@ struct KeyMouseApp: App {
   }
 
   var body: some Scene {
-    Window("Key Mouse Settings", id: "settings") {
+    Window("KeyMouse Settings", id: "settings") {
       SettingsWindow(
         preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate,
         menuBar: menuBar, showMenuBarIcon: showMenuBarIcon)
