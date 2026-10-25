@@ -30,6 +30,9 @@ struct KeyChoice: Identifiable {
       122: "F1", 120: "F2", 99: "F3", 118: "F4", 96: "F5", 97: "F6",
       98: "F7", 100: "F8", 101: "F9", 109: "F10", 103: "F11", 111: "F12",
     ]
+    if let modifier = ActivationModifier.forKey(code) {
+      return "\(modifier.symbol) \(modifier.title)"
+    }
     return special[code] ?? all.first { $0.id == code }?.title ?? "Key \(code)"
   }
 }

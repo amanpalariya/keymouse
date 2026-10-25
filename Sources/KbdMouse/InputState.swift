@@ -46,7 +46,7 @@ struct ActivationState {
   }
   mutating func reset() { self = ActivationState() }
 
-  enum Transition: Equatable { case none, toggle, activate, deactivate }
+  enum Transition: Equatable { case none, toggle }
   mutating func update(down: Bool, otherModifiers: Bool, now: TimeInterval, config: Configuration)
     -> Transition
   {
@@ -58,9 +58,8 @@ struct ActivationState {
     if down {
       candidate = !otherModifiers
       pressedAt = now
-      return config.gesture == .hold && candidate ? .activate : .none
+      return .none
     }
-    if config.gesture == .hold { return .deactivate }
     guard candidate, !otherModifiers else {
       interrupt()
       return .none

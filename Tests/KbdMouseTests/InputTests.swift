@@ -6,7 +6,7 @@ final class InputTests: XCTestCase {
   func testCombinedSlowScrollAndDirection() {
     let config = Configuration()
     var state = InputState()
-    for key: UInt16 in [1, 3, 38] { _ = state.press(key, action: config.action(for: key)!) }
+    for key: UInt16 in [2, 56, 38] { _ = state.press(key, action: config.action(for: key)!) }
     XCTAssertTrue(state.contains(.scroll))
     XCTAssertEqual(state.direction.dy, 1)
     XCTAssertEqual(state.direction.dx, 0)
@@ -27,7 +27,7 @@ final class InputTests: XCTestCase {
     var state = InputState()
     XCTAssertTrue(state.press(49, action: .primary))
     XCTAssertFalse(state.press(49, action: .primary))
-    _ = state.press(13, action: .alternatePrimary)
+    _ = state.press(13, action: .primary)
     XCTAssertTrue(state.release(49).consumed)
     XCTAssertTrue(state.holdsButton(0))
     _ = state.release(13)
@@ -102,15 +102,9 @@ final class InputTests: XCTestCase {
       activation.update(down: false, otherModifiers: false, now: 1.6, config: config), .toggle)
   }
 
-  func testHoldReleaseAndExpiredDoubleTap() {
+  func testExpiredDoubleTapDoesNotActivate() {
     var activation = ActivationState()
-    var config = Configuration()
-    config.gesture = .hold
-    XCTAssertEqual(
-      activation.update(down: true, otherModifiers: false, now: 1, config: config), .activate)
-    XCTAssertEqual(
-      activation.update(down: false, otherModifiers: false, now: 2, config: config), .deactivate)
-    config.gesture = .doubleTap
+    let config = Configuration()
     _ = activation.update(down: true, otherModifiers: false, now: 3, config: config)
     _ = activation.update(down: false, otherModifiers: false, now: 3.1, config: config)
     _ = activation.update(down: true, otherModifiers: false, now: 4, config: config)

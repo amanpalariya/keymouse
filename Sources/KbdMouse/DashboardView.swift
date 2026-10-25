@@ -68,6 +68,11 @@ struct DashboardView: View {
       Text(title).font(.callout)
       Spacer(minLength: 4)
       HStack(spacing: 3) {
+        if keys.contains(.primary) {
+          Text("Space").font(.system(size: 11, weight: .medium, design: .monospaced))
+            .padding(.horizontal, 5).padding(.vertical, 4)
+            .background(.quaternary.opacity(0.45), in: RoundedRectangle(cornerRadius: 4))
+        }
         ForEach(keys) { action in
           Text(KeyChoice.title(for: preferences.configuration.bindings[action] ?? 0))
             .font(.system(size: 11, weight: .medium, design: .monospaced))
@@ -86,9 +91,7 @@ struct DashboardView: View {
 
   private var activationHint: String {
     let config = preferences.configuration
-    if engine.active && config.gesture == .hold {
-      return "Release \(config.modifier.title) to stop"
-    }
-    return "\(config.gesture.title) \(config.modifier.title) to \(engine.active ? "stop" : "start")"
+    return
+      "\(config.gesture.title) \(config.modifier.symbol) to \(engine.active ? "stop" : "start")"
   }
 }

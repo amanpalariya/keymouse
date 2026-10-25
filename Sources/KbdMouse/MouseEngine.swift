@@ -175,6 +175,7 @@ final class MouseEngine: ObservableObject {
     if type == .flagsChanged {
       guard !recordingBinding else { return false }
       handleModifiers(event.flags)
+      handleModifierBinding(event)
       return false
     }
     let key = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
@@ -192,9 +193,17 @@ final class MouseEngine: ObservableObject {
       now: ProcessInfo.processInfo.systemUptime, config: config)
     switch transition {
     case .toggle: toggle()
-    case .activate: activate()
-    case .deactivate: deactivate()
     case .none: break
+    }
+  }
+
+  private func handleModifierBinding(_ event: CGEvent) {
+    let key = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
+    guard let modifier = ActivationModifier.forKey(key) else { return }
+    if event.flags.contains(modifier.flag) {
+      _ = pressKey(modifier.keyCode, interruptActivation: false)
+    } else {
+      _ = releaseKey(modifier.keyCode)
     }
   }
 
@@ -207,9 +216,9 @@ final class MouseEngine: ObservableObject {
     return released.consumed
   }
 
-  private func pressKey(_ key: UInt16) -> Bool {
+  private func pressKey(_ key: UInt16, interruptActivation: Bool = true) -> Bool {
     let config = preferences.configuration
-    activation.interrupt()
+    if interruptActivation { activation.interrupt() }
     guard active else { return input.isSwallowed(key) }
     lastInteraction = ProcessInfo.processInfo.systemUptime
     if key == 53 && config.escapeCancels {

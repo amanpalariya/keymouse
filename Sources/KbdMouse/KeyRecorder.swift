@@ -26,6 +26,7 @@ final class KeyRecorderButton: NSButton {
   var onRecordingChanged: ((Bool) -> Void)?
   private var recording = false
   private var clickMonitor: Any?
+  private var modifierCandidate: ActivationModifier?
 
   init() {
     super.init(frame: .zero)
@@ -39,6 +40,10 @@ final class KeyRecorderButton: NSButton {
   override var acceptsFirstResponder: Bool { true }
 
   @objc private func beginRecording() {
+    if recording {
+      finishRecording()
+      return
+    }
     guard window?.makeFirstResponder(self) == true else { return }
     recording = true
     onRecordingChanged?(true)
@@ -61,6 +66,7 @@ final class KeyRecorderButton: NSButton {
       return
     }
     guard !event.isARepeat else { return }
+    modifierCandidate = nil
     let modifiers = event.modifierFlags.intersection([.command, .control, .option, .shift])
     guard modifiers.isEmpty else {
       title = "Single key only"
@@ -69,6 +75,18 @@ final class KeyRecorderButton: NSButton {
     let key = event.keyCode
     finishRecording()
     onRecord?(key)
+  }
+
+  override func flagsChanged(with event: NSEvent) {
+    guard recording, let modifier = ActivationModifier.forKey(event.keyCode) else { return }
+    if event.modifierFlags.rawValue & UInt(modifier.flag.rawValue) != 0 {
+      let flags = event.modifierFlags.intersection([.command, .control, .option, .shift])
+      modifierCandidate = flags.rawValue.nonzeroBitCount == 1 ? modifier : nil
+      return
+    }
+    guard modifierCandidate == modifier else { return }
+    finishRecording()
+    onRecord?(modifier.keyCode)
   }
 
   override func resignFirstResponder() -> Bool {
@@ -92,6 +110,7 @@ final class KeyRecorderButton: NSButton {
   private func finishRecording() {
     guard recording else { return }
     recording = false
+    modifierCandidate = nil
     if let clickMonitor { NSEvent.removeMonitor(clickMonitor) }
     clickMonitor = nil
     onRecordingChanged?(false)

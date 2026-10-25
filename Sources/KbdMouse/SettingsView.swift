@@ -102,9 +102,12 @@ struct SettingsView: View {
           }.labelsHidden().frame(width: 150)
         }
         PreferenceDivider()
-        PreferenceRow(title: "Activation Key", symbol: "command", color: .purple) {
+        PreferenceRow(
+          title: "Activation Key", symbol: preferences.configuration.modifier.systemImage,
+          color: .purple
+        ) {
           Picker("Activation Key", selection: $preferences.configuration.modifier) {
-            ForEach(ActivationModifier.allCases) { Text($0.title).tag($0) }
+            ForEach(ActivationModifier.allCases) { Text("\($0.symbol)  \($0.title)").tag($0) }
           }.labelsHidden().frame(width: 150)
         }
         if preferences.configuration.gesture == .doubleTap {
@@ -124,7 +127,7 @@ struct SettingsView: View {
         [.left, .down, .up, .right],
         color: .blue)
       bindingCard(
-        [.primary, .alternatePrimary, .middle, .secondary], color: .pink)
+        [.primary, .middle, .secondary], color: .pink)
       bindingCard([.fast, .slow, .scroll], color: .orange)
       Button("Reset Keys") {
         bindingEditor.reset(in: preferences)
@@ -136,7 +139,10 @@ struct SettingsView: View {
     PreferenceCard {
       ForEach(actions) { action in
         if action != actions.first { PreferenceDivider() }
-        PreferenceRow(title: action.title, symbol: action.systemImage, color: color) {
+        PreferenceRow(
+          title: action.title, symbol: action.systemImage, color: color,
+          subtitle: action == .primary ? "Space always works" : nil
+        ) {
           KeyRecorder(
             keyCode: preferences.configuration.bindings[action] ?? 0, title: action.title,
             onRecord: { bindingEditor.bind(action, to: $0, in: preferences) },
@@ -174,6 +180,18 @@ struct SettingsView: View {
             title: "Initial Speed", symbol: "tortoise", color: .purple,
             value: $preferences.configuration.acceleration.initialSpeed, range: 0.1...0.6,
             format: "%.2f×")
+        }
+      }
+      PreferenceCard {
+        PreferenceToggle(
+          title: "Deceleration", symbol: "stop.circle", color: .purple,
+          isOn: $preferences.configuration.acceleration.decelerationEnabled)
+        if preferences.configuration.acceleration.decelerationEnabled {
+          PreferenceDivider()
+          PreferenceSlider(
+            title: "Stopping Time", symbol: "chart.line.downtrend.xyaxis", color: .purple,
+            value: $preferences.configuration.acceleration.stopTime, range: 0.05...0.4,
+            format: "%.2f s")
         }
       }
       PreferenceCard {

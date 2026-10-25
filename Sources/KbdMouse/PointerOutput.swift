@@ -33,10 +33,10 @@ final class PointerOutput {
         reversed: config.reverseScroll)
     } else {
       resetScroll()
-      let distance = acceleration.distance(
+      let displacement = acceleration.displacement(
         direction: input.direction,
         speed: config.moveSpeed * multiplier, elapsed: dt, settings: config.acceleration)
-      move(input: input, distance: distance)
+      move(input: input, displacement: displacement)
     }
   }
 
@@ -56,10 +56,9 @@ final class PointerOutput {
     }
   }
 
-  private func move(input: InputState, distance: Double) {
-    let direction = input.direction
-    guard direction != .zero,
-      let next = motion.advance(direction: direction, distance: distance, displays: displays)
+  private func move(input: InputState, displacement: CGVector) {
+    guard displacement != .zero,
+      let next = motion.advance(direction: displacement, distance: 1, displays: displays)
     else { return }
     let button = heldButton(in: input)
     let type = movementType(for: button)
@@ -83,6 +82,7 @@ final class PointerOutput {
   }
 
   func postButton(_ button: CGMouseButton, down: Bool) {
+    acceleration.reset()
     guard let point = position else { return }
     let type: CGEventType
     switch button {

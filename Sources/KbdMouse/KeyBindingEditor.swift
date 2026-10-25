@@ -4,6 +4,10 @@ final class KeyBindingEditor: ObservableObject {
   @Published private(set) var message = "Click a keycap, then press a key. Escape cancels."
 
   func bind(_ action: MouseAction, to key: UInt16, in preferences: Preferences) {
+    guard key != Configuration.spaceKey else {
+      message = "Space always left-clicks. Choose another key."
+      return
+    }
     let existing = preferences.configuration.bindings.first {
       $0.value == key && $0.key != action
     }?.key

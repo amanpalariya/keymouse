@@ -21,15 +21,15 @@ Double-tap **Option** to toggle keyboard control. **Escape** cancels; 30 seconds
 | Space / W | Left button |
 | E | Middle button |
 | R | Right button |
-| Hold A | Fast |
-| Hold S | Slow |
-| Hold F | Scroll |
+| Hold F | Fast |
+| Hold D | Slow |
+| Hold Shift | Scroll |
 
-Acceleration is enabled by default. Adjust its ramp time and initial speed, or turn it off, in **Settings → Motion**. Pointer speed is the maximum speed reached after the ramp.
+Acceleration and deceleration are enabled by default. Adjust its ramp time and initial speed, or turn either off, in **Settings → Motion**. Stopping time controls deceleration. Escape always stops immediately. Pointer speed is the maximum speed reached after the ramp.
 
-Hold a button key while moving to drag. Combine controls: **S + F + J** scrolls down slowly. Double-click by tapping twice. A badge follows the cursor while active. Settings persist automatically; settings changes stop an active session.
+Hold a button key while moving to drag. Combine controls: **D + Shift + J** scrolls down slowly. Double-click by tapping twice. A badge follows the cursor while active. Settings persist automatically; settings changes stop an active session.
 
-Record bindings in **Settings → Controls**: click a keycap and press a key. Escape cancels; assigning a used key swaps the two bindings. Bindings use physical US keyboard positions, independent of input language. Other keys pass through. Secure input fields and macOS-protected surfaces may prevent event capture.
+Record bindings in **Settings → Controls**: click a keycap and press a key. Escape cancels; assigning a used key swaps the two bindings. Space is a fixed left-click shortcut; the single left-click binding (W by default) is configurable. Shift can be recorded on either side of the keyboard. Bindings use physical US keyboard positions, independent of input language. Other keys pass through. Secure input fields and macOS-protected surfaces may prevent event capture.
 
 ## Development
 

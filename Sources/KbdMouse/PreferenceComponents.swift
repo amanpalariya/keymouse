@@ -8,7 +8,6 @@ extension MouseAction {
     case .up: "arrow.up"
     case .right: "arrow.right"
     case .primary: "cursorarrow.click"
-    case .alternatePrimary: "cursorarrow.click.2"
     case .middle: "computermouse"
     case .secondary: "contextualmenu.and.cursorarrow"
     case .fast: "hare"
@@ -48,12 +47,16 @@ struct PreferenceRow<Control: View>: View {
   let title: String
   let symbol: String
   var color: Color = .blue
+  var subtitle: String? = nil
   @ViewBuilder let control: Control
 
   var body: some View {
     HStack(spacing: 11) {
       PreferenceIcon(symbol: symbol, color: color)
-      Text(title)
+      VStack(alignment: .leading, spacing: 3) {
+        Text(title)
+        if let subtitle { Text(subtitle).font(.caption).foregroundStyle(.secondary) }
+      }
       Spacer(minLength: 12)
       control
     }
