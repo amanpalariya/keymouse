@@ -1,15 +1,16 @@
 import AppKit
 
-/// A cursor contained in a keycap, shared by the app and menu bar.
+/// Shared app artwork and the menu bar's template symbol.
 enum BrandArtwork {
-  static let accent = NSColor(srgbRed: 0.44, green: 0.25, blue: 0.95, alpha: 1)
+  static let accent = NSColor(srgbRed: 0.15, green: 0.4, blue: 0.96, alpha: 1)
+
   static func symbol(size: CGFloat, color: NSColor = .labelColor, template: Bool = false) -> NSImage
   {
     let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
       let transform = NSAffineTransform()
       transform.scale(by: rect.width / 32)
       transform.concat()
-      drawMark(color: color)
+      drawOutline(color: color)
       return true
     }
     image.isTemplate = template
@@ -17,39 +18,46 @@ enum BrandArtwork {
   }
 
   static func appIcon(size: CGFloat) -> NSImage {
-    NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
-      let surface = NSBezierPath(
-        roundedRect: rect.insetBy(dx: size * 0.06, dy: size * 0.06),
-        xRadius: size * 0.2, yRadius: size * 0.2)
-      NSGradient(
-        starting: NSColor(srgbRed: 0.35, green: 0.35, blue: 0.98, alpha: 1),
-        ending: NSColor(srgbRed: 0.52, green: 0.16, blue: 0.91, alpha: 1))?.draw(
-          in: surface, angle: -70)
-      let transform = NSAffineTransform()
-      transform.translateX(by: size * 0.19, yBy: size * 0.19)
-      transform.scale(by: size * 0.62 / 32)
-      transform.concat()
-      drawMark(color: .white)
-      return true
-    }
+    let image = iconResource().flatMap { NSImage(contentsOf: $0) } ?? NSImage()
+    image.size = NSSize(width: size, height: size)
+    return image
   }
 
-  private static func drawMark(color: NSColor) {
-    color.setStroke()
-    let key = NSBezierPath(
-      roundedRect: NSRect(x: 2, y: 2, width: 28, height: 28), xRadius: 6, yRadius: 6)
-    key.lineWidth = 2
-    key.stroke()
-    let pointer = NSBezierPath()
-    pointer.move(to: CGPoint(x: 11, y: 25))
-    for point in [
-      CGPoint(x: 23, y: 14), CGPoint(x: 17.8, y: 13.1), CGPoint(x: 20.7, y: 7.1),
-      CGPoint(x: 17.5, y: 5.5), CGPoint(x: 14.4, y: 11.8), CGPoint(x: 10.8, y: 8.4),
-    ] {
-      pointer.line(to: point)
+  private static func iconResource() -> URL? {
+    if let url = Bundle.main.url(forResource: "AppIcon", withExtension: "png") {
+      return url
     }
-    pointer.close()
+    #if SWIFT_PACKAGE
+      return Bundle.module.url(forResource: "AppIcon", withExtension: "png")
+    #else
+      return nil
+    #endif
+  }
+
+  private static func drawOutline(color: NSColor) {
     color.setFill()
-    pointer.fill()
+    let frame = NSBezierPath(
+      roundedRect: NSRect(x: 3, y: 3, width: 26, height: 26), xRadius: 6, yRadius: 6)
+    frame.windingRule = .evenOdd
+    frame.append(
+      NSBezierPath(
+        roundedRect: NSRect(x: 5, y: 7, width: 22, height: 20), xRadius: 4, yRadius: 4))
+    frame.fill()
+    color.setStroke()
+    let cursor = cursorPath()
+    cursor.lineWidth = 1.5
+    cursor.lineJoinStyle = .round
+    cursor.stroke()
+  }
+
+  private static func cursorPath() -> NSBezierPath {
+    let path = NSBezierPath()
+    path.move(to: CGPoint(x: 11, y: 24))
+    for point in [
+      CGPoint(x: 22, y: 16), CGPoint(x: 17.6, y: 15.5), CGPoint(x: 19.6, y: 11.5),
+      CGPoint(x: 17.5, y: 10.5), CGPoint(x: 15.4, y: 14.5), CGPoint(x: 11, y: 11),
+    ] { path.line(to: point) }
+    path.close()
+    return path
   }
 }

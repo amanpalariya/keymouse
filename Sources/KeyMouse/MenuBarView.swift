@@ -14,10 +14,10 @@ struct MenuBarView: View {
           Text(activationHint).font(.callout).foregroundStyle(.secondary)
           Button(engine.active ? "Stop" : "Start") { engine.toggle() }
             .buttonStyle(.borderedProminent).controlSize(.large)
-            .tint(.purple).frame(maxWidth: .infinity)
+            .tint(.blue).frame(maxWidth: .infinity)
         } else {
           OpenSettingsButton(title: engine.trusted ? "Reconnect…" : "Enable Accessibility…")
-            .buttonStyle(.borderedProminent).tint(.purple)
+            .buttonStyle(.borderedProminent).tint(.blue)
         }
       }.padding(.vertical, 6)
       VStack(spacing: 0) {
