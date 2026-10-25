@@ -86,6 +86,8 @@ struct Configuration: Codable, Equatable {
   var modifier: ActivationModifier = .option
   var gesture: ActivationGesture = .doubleTap
   var escapeCancels = true
+  var exitOnUnboundKey = true
+  var exitOnPointerMovement = true
   var timeoutEnabled = true
   var idleTimeout: Double = 30
   var showBadge = true
@@ -101,7 +103,8 @@ struct Configuration: Codable, Equatable {
   init() {}
 
   private enum CodingKeys: String, CodingKey {
-    case modifier, gesture, escapeCancels, timeoutEnabled, idleTimeout
+    case modifier, gesture, escapeCancels, exitOnUnboundKey, exitOnPointerMovement
+    case timeoutEnabled, idleTimeout
     case showBadge, arrowsEnabled, moveSpeed, scrollSpeed, fastMultiplier, slowMultiplier
     case reverseScroll, bindings, acceleration
   }
@@ -112,6 +115,10 @@ struct Configuration: Codable, Equatable {
     modifier = try values.decodeIfPresent(ActivationModifier.self, forKey: .modifier) ?? modifier
     gesture = try values.decodeIfPresent(ActivationGesture.self, forKey: .gesture) ?? gesture
     escapeCancels = try values.decodeIfPresent(Bool.self, forKey: .escapeCancels) ?? escapeCancels
+    exitOnUnboundKey =
+      try values.decodeIfPresent(Bool.self, forKey: .exitOnUnboundKey) ?? exitOnUnboundKey
+    exitOnPointerMovement =
+      try values.decodeIfPresent(Bool.self, forKey: .exitOnPointerMovement) ?? exitOnPointerMovement
     timeoutEnabled =
       try values.decodeIfPresent(Bool.self, forKey: .timeoutEnabled) ?? timeoutEnabled
     idleTimeout = try values.decodeIfPresent(Double.self, forKey: .idleTimeout) ?? idleTimeout
@@ -144,6 +151,10 @@ struct Configuration: Codable, Equatable {
   ]
 
   static let spaceKey: UInt16 = 49
+
+  func shouldExit(forUnboundKey key: UInt16) -> Bool {
+    exitOnUnboundKey && ActivationModifier.forKey(key) != modifier && action(for: key) == nil
+  }
 
   mutating func resetMotion() {
     let defaults = Configuration()

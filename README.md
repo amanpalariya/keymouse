@@ -15,6 +15,8 @@ Open Key Mouse from Applications or the Dock at any time, even when its menu bar
 
 Double-tap **Option** to toggle keyboard control. **Escape** cancels; 30 seconds of inactivity also stops it. Change these in Settings.
 
+Keyboard control also exits when you press an unbound key or move the pointer with a mouse, trackpad, or another input source. Both options are enabled by default and can be turned off independently in **Settings → General**. Unbound keys pass through to the current app only when they trigger an exit; otherwise they are swallowed while keyboard control is active. The activation key and configured controls keep working without triggering these exits.
+
 | Keys | Action |
 | --- | --- |
 | Arrows / H J K L | Left, down, up, right |
@@ -29,7 +31,7 @@ Acceleration and deceleration are enabled by default. Adjust its ramp time and i
 
 Hold a button key while moving to drag. Combine controls: **D + Shift + J** scrolls down slowly. Double-click by tapping twice. A badge follows the cursor while active. Settings persist automatically; settings changes stop an active session.
 
-Record bindings in **Settings → Controls**: click a keycap and press a key. Escape cancels; used keys are rejected with a red keycap and a popover explaining the conflict. Space is a fixed left-click shortcut; the single left-click binding (W by default) is configurable. Shift can be recorded on either side of the keyboard. Bindings use physical US keyboard positions, independent of input language. Other keys pass through. Secure input fields and macOS-protected surfaces may prevent event capture.
+Record bindings in **Settings → Controls**: click a keycap and press a key. Escape cancels; used keys are rejected with a red keycap and a popover explaining the conflict. Space is a fixed left-click shortcut; the single left-click binding (W by default) is configurable. Shift can be recorded on either side of the keyboard. Bindings use physical US keyboard positions, independent of input language. Secure input fields and macOS-protected surfaces may prevent event capture.
 
 ## Development
 

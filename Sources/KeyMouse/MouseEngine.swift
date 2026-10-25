@@ -170,13 +170,16 @@ final class MouseEngine: ObservableObject {
     }
     if [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged].contains(type) {
       pointer.synchronize(to: event.location)
+      if active && preferences.configuration.exitOnPointerMovement {
+        activation.interrupt()
+        deactivate()
+      }
       return false
     }
     if type == .flagsChanged {
       guard !recordingBinding else { return false }
       handleModifiers(event.flags)
-      handleModifierBinding(event)
-      return false
+      return handleModifierBinding(event)
     }
     let key = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
     if type == .keyUp { return releaseKey(key) }
@@ -197,13 +200,23 @@ final class MouseEngine: ObservableObject {
     }
   }
 
-  private func handleModifierBinding(_ event: CGEvent) {
+  private func handleModifierBinding(_ event: CGEvent) -> Bool {
     let key = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
-    guard let modifier = ActivationModifier.forKey(key) else { return }
-    if event.flags.contains(modifier.flag) {
-      _ = pressKey(modifier.keyCode, interruptActivation: false)
+    let flag: CGEventFlags
+    if let modifier = ActivationModifier.forKey(key) {
+      flag = modifier.flag
+    } else if key == 57 {
+      flag = .maskAlphaShift
+    } else if key == 63 {
+      flag = .maskSecondaryFn
     } else {
-      _ = releaseKey(modifier.keyCode)
+      return active
+    }
+    let bindingKey = ActivationModifier.forKey(key)?.keyCode ?? key
+    if event.flags.contains(flag) {
+      return pressKey(bindingKey, interruptActivation: false)
+    } else {
+      return releaseKey(bindingKey)
     }
   }
 
@@ -226,7 +239,15 @@ final class MouseEngine: ObservableObject {
       deactivate()
       return true
     }
-    guard let action = config.action(for: key) else { return false }
+    guard let action = config.action(for: key) else {
+      if config.shouldExit(forUnboundKey: key) {
+        activation.interrupt()
+        deactivate()
+        return false
+      }
+      input.swallow(key)
+      return true
+    }
     let alreadyHeld = action.button.map { input.holdsButton($0.rawValue) } ?? false
     if input.press(key, action: action), let button = action.button, !alreadyHeld {
       pointer.postButton(button, down: true)

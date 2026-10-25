@@ -90,6 +90,14 @@ struct SettingsView: View {
           isOn: $preferences.configuration.escapeCancels)
         PreferenceDivider()
         PreferenceToggle(
+          title: "Exit on Unbound Key", symbol: "keyboard", color: .red,
+          isOn: $preferences.configuration.exitOnUnboundKey)
+        PreferenceDivider()
+        PreferenceToggle(
+          title: "Exit on Mouse or Trackpad Movement", symbol: "cursorarrow.motionlines",
+          color: .red, isOn: $preferences.configuration.exitOnPointerMovement)
+        PreferenceDivider()
+        PreferenceToggle(
           title: "Stop After Inactivity", symbol: "timer", color: .orange,
           isOn: $preferences.configuration.timeoutEnabled)
         if preferences.configuration.timeoutEnabled {
