@@ -5,6 +5,10 @@ swift build -c release
 BIN_DIR="$(swift build -c release --show-bin-path)"
 APP="$PWD/dist/Kbd Mouse.app"
 mkdir -p "$APP/Contents/MacOS"
+mkdir -p "$APP/Contents/Resources"
+swiftc Sources/KbdMouse/BrandArtwork.swift scripts/render-icon.swift -o .build/render-icon
+.build/render-icon .build/AppIcon.iconset
+iconutil -c icns .build/AppIcon.iconset -o "$APP/Contents/Resources/AppIcon.icns"
 cp "$BIN_DIR/KbdMouse" "$APP/Contents/MacOS/KbdMouse"
 cp Info.plist "$APP/Contents/Info.plist"
 # Set SIGNING_IDENTITY to an Apple Development or Developer ID identity for stable TCC grants.

@@ -6,6 +6,7 @@ final class PointerOutput {
   private let source = CGEventSource(stateID: .hidSystemState)
   private var scrollRemainder = CGVector.zero
   private var motion = CursorMotion()
+  private var acceleration = MotionAcceleration()
   private var displays: [CGRect] = []
   private var clickCounts: [UInt32: Int64] = [:]
   private var lastClicks: [UInt32: (time: TimeInterval, point: CGPoint)] = [:]
@@ -14,7 +15,10 @@ final class PointerOutput {
 
   var position: CGPoint? { motion.position }
 
-  func synchronize(to point: CGPoint) { motion.synchronize(to: point) }
+  func synchronize(to point: CGPoint) {
+    motion.synchronize(to: point)
+    acceleration.reset()
+  }
 
   func refreshDisplays() {
     displays = NSScreen.screens.compactMap(\.displayID).map { CGDisplayBounds($0) }
@@ -23,12 +27,16 @@ final class PointerOutput {
   func update(input: InputState, configuration config: Configuration, elapsed dt: TimeInterval) {
     let multiplier = input.speedMultiplier(config)
     if input.contains(.scroll) {
+      acceleration.reset()
       scroll(
         direction: input.direction, speed: config.scrollSpeed * multiplier * dt,
         reversed: config.reverseScroll)
     } else {
       resetScroll()
-      move(input: input, distance: config.moveSpeed * multiplier * dt)
+      let distance = acceleration.distance(
+        direction: input.direction,
+        speed: config.moveSpeed * multiplier, elapsed: dt, settings: config.acceleration)
+      move(input: input, distance: distance)
     }
   }
 

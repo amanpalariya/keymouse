@@ -14,6 +14,7 @@ final class MouseEngine: ObservableObject {
   private var observers: [NSObjectProtocol] = []
   private var input = InputState()
   private var activation = ActivationState()
+  private var recordingBinding = false
   private var lastInteraction = ProcessInfo.processInfo.systemUptime
   private let badge = CursorBadge()
   private let pointer = PointerOutput()
@@ -114,6 +115,12 @@ final class MouseEngine: ObservableObject {
   }
 
   func toggle() { active ? deactivate() : activate() }
+
+  func setRecordingBinding(_ recording: Bool) {
+    recordingBinding = recording
+    activation.reset()
+    if recording { deactivate() }
+  }
   func activate() {
     guard connected else { return }
     active = true
@@ -166,6 +173,7 @@ final class MouseEngine: ObservableObject {
       return false
     }
     if type == .flagsChanged {
+      guard !recordingBinding else { return false }
       handleModifiers(event.flags)
       return false
     }

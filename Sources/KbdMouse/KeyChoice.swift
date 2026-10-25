@@ -25,6 +25,11 @@ struct KeyChoice: Identifiable {
     .init(id: 48, title: "Tab"), .init(id: 36, title: "Return"), .init(id: 51, title: "Delete"),
   ]
   static func title(for code: UInt16) -> String {
-    all.first { $0.id == code }?.title ?? "Key \(code)"
+    let special: [UInt16: String] = [
+      123: "←", 124: "→", 125: "↓", 126: "↑",
+      122: "F1", 120: "F2", 99: "F3", 118: "F4", 96: "F5", 97: "F6",
+      98: "F7", 100: "F8", 101: "F9", 109: "F10", 103: "F11", 111: "F12",
+    ]
+    return special[code] ?? all.first { $0.id == code }?.title ?? "Key \(code)"
   }
 }

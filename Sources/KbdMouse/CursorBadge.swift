@@ -52,7 +52,7 @@ final class CursorBadge {
     background.wantsLayer = true
     background.layer?.cornerRadius = 7
     background.layer?.backgroundColor = NSColor.controlAccentColor.cgColor
-    let image = NSImageView(frame: NSRect(x: 5, y: 5, width: 18, height: 14))
+    let image = NSImageView(frame: NSRect(x: 6, y: 4, width: 16, height: 16))
     image.contentTintColor = .white
     background.addSubview(image)
     panel.contentView = background
@@ -63,9 +63,10 @@ final class CursorBadge {
 
   private func setSymbol(_ scrolling: Bool) {
     scrollMode = scrolling
-    imageView?.image = NSImage(
-      systemSymbolName: scrolling ? "scroll" : "keyboard",
-      accessibilityDescription: "Keyboard mouse active")
+    imageView?.image =
+      scrolling
+      ? NSImage(systemSymbolName: "arrow.up.arrow.down", accessibilityDescription: "Scrolling")
+      : BrandArtwork.symbol(size: 18, color: .white)
   }
   func hide() { panel?.orderOut(nil) }
 }

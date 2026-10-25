@@ -5,21 +5,23 @@ struct AccessibilitySetupView: View {
 
   var body: some View {
     if !engine.trusted {
-      Section("Set up Accessibility") {
-        Text("Kbd Mouse needs Accessibility access to move and click the pointer.")
-        Text(
-          "1. Click Allow Access below.\n2. In Privacy & Security → Accessibility, turn on Kbd Mouse.\n3. Return here. Access is checked automatically."
-        )
-        .font(.callout).foregroundStyle(.secondary)
-        HStack {
-          Button("Allow Access") { engine.requestPermission() }
-            .buttonStyle(.borderedProminent)
-          Button("Open Accessibility Settings") { engine.openAccessibility() }
-        }
-        Text(
-          "Already enabled? Remove Kbd Mouse with −, then add it again from Applications. macOS may require this after a local rebuild."
-        )
-        .font(.caption).foregroundStyle(.secondary)
+      PreferenceCard {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 10) {
+            PreferenceIcon(symbol: "hand.raised.fill", color: .blue)
+            Text("Accessibility").font(.headline)
+          }
+          Text("Allow Kbd Mouse to move and click the pointer.")
+          Text("Enable it in System Settings → Privacy & Security → Accessibility.")
+            .font(.callout).foregroundStyle(.secondary)
+          HStack {
+            Button("Allow Access") { engine.requestPermission() }
+              .buttonStyle(.borderedProminent)
+            Button("System Settings…") { engine.openAccessibility() }
+          }
+          Text("Already enabled? Remove the old entry, then add Kbd Mouse from Applications.")
+            .font(.caption).foregroundStyle(.secondary)
+        }.padding(14)
       }
     }
   }

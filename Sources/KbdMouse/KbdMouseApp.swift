@@ -20,20 +20,20 @@ struct KbdMouseApp: App {
       AppWindow(preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate)
     }
     .windowResizability(.contentSize)
-    .commands {
-      CommandGroup(replacing: .appSettings) {
-        OpenAppButton(title: "Settings…").keyboardShortcut(",")
-      }
+    .windowStyle(.hiddenTitleBar)
+    Settings {
+      SettingsView(preferences: preferences, engine: engine, loginItem: loginItem)
     }
     MenuBarExtra(isInserted: $showMenuBarIcon) {
-      MenuContent(engine: engine, preferences: preferences)
+      DashboardView(engine: engine, preferences: preferences)
     } label: {
-      Label("Kbd Mouse", systemImage: engine.active ? "keyboard.fill" : "keyboard")
+      Image(nsImage: BrandArtwork.symbol(size: 20, template: true))
+        .accessibilityLabel("Kbd Mouse")
         .task {
           delegate.engine = engine
           engine.start()
         }
-    }
+    }.menuBarExtraStyle(.window)
   }
 }
 
@@ -58,48 +58,12 @@ private struct AppWindow: View {
   @Environment(\.openWindow) private var openWindow
 
   var body: some View {
-    SettingsView(preferences: preferences, engine: engine, loginItem: loginItem)
+    DashboardView(engine: engine, preferences: preferences)
       .onAppear {
         delegate.engine = engine
         delegate.reopenWindow = { openWindow(id: "main") }
         engine.start()
-        engine.deactivate()
         loginItem.configureDefault()
       }
-  }
-}
-
-private struct OpenAppButton: View {
-  let title: String
-  @Environment(\.openWindow) private var openWindow
-
-  var body: some View {
-    Button(title) {
-      openWindow(id: "main")
-      NSApp.activate(ignoringOtherApps: true)
-    }
-  }
-}
-
-struct MenuContent: View {
-  @ObservedObject var engine: MouseEngine
-  @ObservedObject var preferences: Preferences
-
-  var body: some View {
-    Text(engine.active ? "Keyboard control on" : "Keyboard control off")
-    if engine.connected {
-      Button(engine.active ? "Stop" : "Start") { engine.toggle() }
-      Text("\(preferences.configuration.gesture.title) \(preferences.configuration.modifier.title)")
-    } else {
-      OpenAppButton(title: engine.trusted ? "Reconnect Keyboard Control…" : "Set Up Accessibility…")
-    }
-    Divider()
-    OpenAppButton(title: "Open Kbd Mouse…")
-    OpenAppButton(title: "Settings…").keyboardShortcut(",")
-    Divider()
-    Button("Quit Kbd Mouse") {
-      engine.shutdown()
-      NSApp.terminate(nil)
-    }.keyboardShortcut("q")
   }
 }

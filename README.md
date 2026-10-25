@@ -7,7 +7,7 @@ Native macOS app with keyboard pointer controls and a menu bar shortcut. macOS 1
 open "/Applications/Kbd Mouse.app"
 ```
 
-The app opens with setup instructions. Click **Allow Access**, then turn on **Kbd Mouse** in System Settings → Privacy & Security → Accessibility. If it is missing, use **+** to select it from Applications. The app checks access automatically. If a locally rebuilt app is already enabled but still unavailable, remove its old entry with **−**, then use **+** to add the current copy from Applications.
+Open **Settings** from the gear menu for setup. Click **Allow Access**, then turn on **Kbd Mouse** in System Settings → Privacy & Security → Accessibility. If it is missing, use **+** to select it from Applications. The app checks access automatically. If a locally rebuilt app is already enabled but still unavailable, remove its old entry with **−**, then use **+** to add the current copy from Applications.
 
 **Launch at login** is enabled on first launch. Turn it off in General settings. macOS may require approval in Login Items; the app shows a link when needed. Later changes made in macOS Settings are respected.
 
@@ -25,9 +25,11 @@ Double-tap **Option** to toggle keyboard control. **Escape** cancels; 30 seconds
 | Hold S | Slow |
 | Hold F | Scroll |
 
+Acceleration is enabled by default. Adjust its ramp time and initial speed, or turn it off, in **Settings → Motion**. Pointer speed is the maximum speed reached after the ramp.
+
 Hold a button key while moving to drag. Combine controls: **S + F + J** scrolls down slowly. Double-click by tapping twice. A badge follows the cursor while active. Settings persist automatically; settings changes stop an active session.
 
-Bindings use physical US keyboard positions, independent of input language. Other keys pass through. Secure input fields and macOS-protected surfaces may prevent event capture.
+Record bindings in **Settings → Controls**: click a keycap and press a key. Escape cancels; assigning a used key swaps the two bindings. Bindings use physical US keyboard positions, independent of input language. Other keys pass through. Secure input fields and macOS-protected surfaces may prevent event capture.
 
 ## Development
 

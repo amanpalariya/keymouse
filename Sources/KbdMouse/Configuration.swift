@@ -69,6 +69,40 @@ struct Configuration: Codable, Equatable {
   var slowMultiplier: Double = 0.25
   var reverseScroll = false
   var bindings: [MouseAction: UInt16] = Self.defaultBindings
+  var acceleration = AccelerationSettings()
+
+  init() {}
+
+  private enum CodingKeys: String, CodingKey {
+    case modifier, gesture, doubleTapInterval, escapeCancels, timeoutEnabled, idleTimeout
+    case showBadge, arrowsEnabled, moveSpeed, scrollSpeed, fastMultiplier, slowMultiplier
+    case reverseScroll, bindings, acceleration
+  }
+
+  init(from decoder: Decoder) throws {
+    self.init()
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    modifier = try values.decodeIfPresent(ActivationModifier.self, forKey: .modifier) ?? modifier
+    gesture = try values.decodeIfPresent(ActivationGesture.self, forKey: .gesture) ?? gesture
+    doubleTapInterval =
+      try values.decodeIfPresent(Double.self, forKey: .doubleTapInterval) ?? doubleTapInterval
+    escapeCancels = try values.decodeIfPresent(Bool.self, forKey: .escapeCancels) ?? escapeCancels
+    timeoutEnabled =
+      try values.decodeIfPresent(Bool.self, forKey: .timeoutEnabled) ?? timeoutEnabled
+    idleTimeout = try values.decodeIfPresent(Double.self, forKey: .idleTimeout) ?? idleTimeout
+    showBadge = try values.decodeIfPresent(Bool.self, forKey: .showBadge) ?? showBadge
+    arrowsEnabled = try values.decodeIfPresent(Bool.self, forKey: .arrowsEnabled) ?? arrowsEnabled
+    moveSpeed = try values.decodeIfPresent(Double.self, forKey: .moveSpeed) ?? moveSpeed
+    scrollSpeed = try values.decodeIfPresent(Double.self, forKey: .scrollSpeed) ?? scrollSpeed
+    fastMultiplier =
+      try values.decodeIfPresent(Double.self, forKey: .fastMultiplier) ?? fastMultiplier
+    slowMultiplier =
+      try values.decodeIfPresent(Double.self, forKey: .slowMultiplier) ?? slowMultiplier
+    reverseScroll = try values.decodeIfPresent(Bool.self, forKey: .reverseScroll) ?? reverseScroll
+    bindings = try values.decodeIfPresent([MouseAction: UInt16].self, forKey: .bindings) ?? bindings
+    acceleration =
+      try values.decodeIfPresent(AccelerationSettings.self, forKey: .acceleration) ?? acceleration
+  }
 
   static let defaultBindings: [MouseAction: UInt16] = [
     .left: 4, .down: 38, .up: 40, .right: 37,
@@ -77,8 +111,9 @@ struct Configuration: Codable, Equatable {
   ]
 
   func action(for key: UInt16) -> MouseAction? {
+    if let action = bindings.first(where: { $0.value == key })?.key { return action }
     if arrowsEnabled, let action = Self.arrows[key] { return action }
-    return bindings.first(where: { $0.value == key })?.key
+    return nil
   }
 
   static let arrows: [UInt16: MouseAction] = [123: .left, 124: .right, 125: .down, 126: .up]
