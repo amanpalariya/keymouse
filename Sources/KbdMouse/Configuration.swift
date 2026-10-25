@@ -148,6 +148,16 @@ struct Configuration: Codable, Equatable {
 
   static let spaceKey: UInt16 = 49
 
+  mutating func resetMotion() {
+    let defaults = Configuration()
+    moveSpeed = defaults.moveSpeed
+    scrollSpeed = defaults.scrollSpeed
+    fastMultiplier = defaults.fastMultiplier
+    slowMultiplier = defaults.slowMultiplier
+    reverseScroll = defaults.reverseScroll
+    acceleration = defaults.acceleration
+  }
+
   func action(for key: UInt16) -> MouseAction? {
     if key == Self.spaceKey { return .primary }
     let key = ActivationModifier.forKey(key)?.keyCode ?? key

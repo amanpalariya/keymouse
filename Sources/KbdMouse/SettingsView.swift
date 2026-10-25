@@ -116,8 +116,10 @@ struct SettingsView: View {
       HStack {
         Text("Kbd Mouse · 1.0").foregroundStyle(.tertiary)
         Spacer()
-        Button("Reset All Settings") { preferences.configuration = Configuration() }
-          .buttonStyle(.bordered).controlSize(.regular).font(.body)
+        Button("Reset All Settings", role: .destructive) {
+          preferences.configuration = Configuration()
+        }
+        .buttonStyle(.borderedProminent).tint(.red).controlSize(.regular).font(.body)
       }.font(.caption)
     }
   }
@@ -157,9 +159,9 @@ struct SettingsView: View {
       bindingCard(
         [.primary, .middle, .secondary], color: .pink)
       bindingCard([.fast, .slow, .scroll], color: .orange)
-      Button("Reset Keys") {
+      Button("Reset Keys", role: .destructive) {
         bindingEditor.reset(in: preferences)
-      }.buttonStyle(.bordered).controlSize(.regular)
+      }.buttonStyle(.borderedProminent).tint(.red).controlSize(.regular)
     }
   }
 
@@ -232,6 +234,9 @@ struct SettingsView: View {
           title: "Reverse Scrolling", symbol: "arrow.up.arrow.down", color: .green,
           isOn: $preferences.configuration.reverseScroll)
       }
+      Button("Reset Motion", role: .destructive) {
+        preferences.configuration.resetMotion()
+      }.buttonStyle(.borderedProminent).tint(.red).controlSize(.regular)
     }
   }
 }

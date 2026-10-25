@@ -255,6 +255,6 @@ final class MouseEngine: ObservableObject {
       badge.hide()
       return
     }
-    badge.show(at: point, scrolling: scrolling)
+    badge.show(at: point)
   }
 }

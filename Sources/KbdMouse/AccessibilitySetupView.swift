@@ -19,8 +19,6 @@ struct AccessibilitySetupView: View {
               .buttonStyle(.borderedProminent)
             Button("System Settings…") { engine.openAccessibility() }
           }
-          Text("Already enabled? Remove the old entry, then add Kbd Mouse from Applications.")
-            .font(.caption).foregroundStyle(.secondary)
         }.padding(14)
       }
     }
