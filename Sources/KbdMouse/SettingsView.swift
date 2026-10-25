@@ -143,12 +143,8 @@ struct SettingsView: View {
           title: action.title, symbol: action.systemImage, color: color,
           subtitle: action == .primary ? "Space always works" : nil
         ) {
-          KeyRecorder(
-            keyCode: preferences.configuration.bindings[action] ?? 0, title: action.title,
-            onRecord: { bindingEditor.bind(action, to: $0, in: preferences) },
-            onRecordingChanged: engine.setRecordingBinding
-          )
-          .frame(width: 112, height: 26)
+          BindingKeycap(
+            action: action, preferences: preferences, engine: engine, editor: bindingEditor)
         }
       }
     }

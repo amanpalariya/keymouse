@@ -45,11 +45,11 @@ final class InputTests: XCTestCase {
     XCTAssertFalse(state.release(49).consumed)
   }
 
-  func testBindingSwapAndArrowFallback() throws {
+  func testUsedBindingIsRejectedAndArrowFallback() throws {
     var config = Configuration()
-    config.bind(.left, to: 38)
-    XCTAssertEqual(config.action(for: 38), .left)
-    XCTAssertEqual(config.action(for: 4), .down)
+    XCTAssertFalse(config.bind(.left, to: 38))
+    XCTAssertEqual(config.action(for: 38), .down)
+    XCTAssertEqual(config.action(for: 4), .left)
     XCTAssertEqual(Set(config.bindings.values).count, MouseAction.allCases.count)
     XCTAssertEqual(config.action(for: 123), .left)
     config.arrowsEnabled = false

@@ -1,25 +1,45 @@
 import Combine
 
+struct BindingConflict: Equatable {
+  let action: MouseAction
+  let key: UInt16
+  let owner: MouseAction
+
+  var message: String {
+    if key == Configuration.spaceKey {
+      return "Space is fixed to left click. Choose another key."
+    }
+    return
+      "\(KeyChoice.title(for: key)) is assigned to \(owner.title.lowercased()). Choose another key."
+  }
+}
+
 final class KeyBindingEditor: ObservableObject {
   @Published private(set) var message = "Click a keycap, then press a key. Escape cancels."
+  @Published private(set) var conflict: BindingConflict?
 
   func bind(_ action: MouseAction, to key: UInt16, in preferences: Preferences) {
-    guard key != Configuration.spaceKey else {
-      message = "Space always left-clicks. Choose another key."
+    let key = ActivationModifier.forKey(key)?.keyCode ?? key
+    let existing =
+      key == Configuration.spaceKey
+      ? MouseAction.primary
+      : preferences.configuration.bindings.first {
+        $0.value == key && $0.key != action
+      }?.key
+    if let existing {
+      conflict = BindingConflict(action: action, key: key, owner: existing)
       return
     }
-    let existing = preferences.configuration.bindings.first {
-      $0.value == key && $0.key != action
-    }?.key
-    preferences.configuration.bind(action, to: key)
-    message =
-      existing.map {
-        "Swapped \(action.title.lowercased()) and \($0.title.lowercased())."
-      } ?? "\(action.title) set to \(KeyChoice.title(for: key))."
+    guard preferences.configuration.bind(action, to: key) else { return }
+    conflict = nil
+    message = "\(action.title) set to \(KeyChoice.title(for: key))."
   }
+
+  func dismissConflict() { conflict = nil }
 
   func reset(in preferences: Preferences) {
     preferences.configuration.bindings = Configuration.defaultBindings
+    conflict = nil
     message = "Keys restored to defaults."
   }
 }

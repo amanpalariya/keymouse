@@ -5,14 +5,17 @@ final class Preferences: ObservableObject {
   @Published var configuration: Configuration {
     didSet {
       if let data = try? JSONEncoder().encode(configuration) {
-        UserDefaults.standard.set(data, forKey: Self.storageKey)
+        defaults.set(data, forKey: Self.storageKey)
       }
     }
   }
   private static let storageKey = "configuration.v1"
-  init() {
+  private let defaults: UserDefaults
+
+  init(defaults: UserDefaults = .standard) {
+    self.defaults = defaults
     configuration =
-      UserDefaults.standard.data(forKey: Self.storageKey)
+      defaults.data(forKey: Self.storageKey)
       .flatMap { try? JSONDecoder().decode(Configuration.self, from: $0) } ?? Configuration()
   }
 }

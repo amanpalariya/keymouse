@@ -5,6 +5,8 @@ import SwiftUI
 struct KeyRecorder: NSViewRepresentable {
   let keyCode: UInt16
   let title: String
+  var rejectedKey: UInt16? = nil
+  var onBeginRecording: () -> Void = {}
   let onRecord: (UInt16) -> Void
   let onRecordingChanged: (Bool) -> Void
 
@@ -12,6 +14,8 @@ struct KeyRecorder: NSViewRepresentable {
 
   func updateNSView(_ button: KeyRecorderButton, context: Context) {
     button.keyTitle = KeyChoice.title(for: keyCode)
+    button.rejectedTitle = rejectedKey.map { KeyChoice.title(for: $0) }
+    button.onBeginRecording = onBeginRecording
     button.onRecord = onRecord
     button.onRecordingChanged = onRecordingChanged
     button.setAccessibilityLabel("\(title): \(button.keyTitle)")
@@ -22,6 +26,8 @@ struct KeyRecorder: NSViewRepresentable {
 
 final class KeyRecorderButton: NSButton {
   var keyTitle = ""
+  var rejectedTitle: String?
+  var onBeginRecording: (() -> Void)?
   var onRecord: ((UInt16) -> Void)?
   var onRecordingChanged: ((Bool) -> Void)?
   private var recording = false
@@ -45,6 +51,7 @@ final class KeyRecorderButton: NSButton {
       return
     }
     guard window?.makeFirstResponder(self) == true else { return }
+    onBeginRecording?()
     recording = true
     onRecordingChanged?(true)
     clickMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) { [weak self] event in
@@ -105,7 +112,15 @@ final class KeyRecorderButton: NSButton {
     super.viewWillMove(toWindow: newWindow)
   }
 
-  func refreshTitle() { title = recording ? "Press a key…" : keyTitle }
+  func refreshTitle() {
+    let label = recording ? "Press a key…" : rejectedTitle ?? keyTitle
+    attributedTitle = NSAttributedString(
+      string: label,
+      attributes: [
+        .foregroundColor: rejectedTitle == nil ? NSColor.controlTextColor : NSColor.systemRed,
+        .font: NSFont.monospacedSystemFont(ofSize: 12, weight: .medium),
+      ])
+  }
 
   private func finishRecording() {
     guard recording else { return }

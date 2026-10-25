@@ -158,13 +158,14 @@ struct Configuration: Codable, Equatable {
 
   static let arrows: [UInt16: MouseAction] = [123: .left, 124: .right, 125: .down, 126: .up]
 
-  mutating func bind(_ action: MouseAction, to key: UInt16) {
+  @discardableResult
+  mutating func bind(_ action: MouseAction, to key: UInt16) -> Bool {
     let key = ActivationModifier.forKey(key)?.keyCode ?? key
-    guard key != Self.spaceKey else { return }
-    if let other = bindings.first(where: { $0.value == key && $0.key != action })?.key {
-      bindings[other] = bindings[action]
-    }
+    guard key != Self.spaceKey,
+      !bindings.contains(where: { $0.value == key && $0.key != action })
+    else { return false }
     bindings[action] = key
+    return true
   }
   private static func migratedBindings(_ saved: [String: UInt16]) -> [MouseAction: UInt16] {
     var saved = saved

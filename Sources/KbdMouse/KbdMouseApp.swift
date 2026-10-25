@@ -25,7 +25,7 @@ struct KbdMouseApp: App {
       SettingsView(preferences: preferences, engine: engine, loginItem: loginItem)
     }
     MenuBarExtra(isInserted: $showMenuBarIcon) {
-      DashboardView(engine: engine, preferences: preferences)
+      MenuBarPanel(engine: engine, preferences: preferences)
     } label: {
       Image(nsImage: BrandArtwork.symbol(size: 20, template: true))
         .accessibilityLabel("Kbd Mouse")
