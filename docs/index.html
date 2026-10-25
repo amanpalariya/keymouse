@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="KeyMouse is a native macOS app for moving, clicking, dragging, and scrolling with your keyboard.">
+  <meta name="color-scheme" content="light dark">
+  <title>KeyMouse — Mouse control from your keyboard</title>
+  <link rel="icon" href="./assets/icon.png">
+  <script>
+    try { const theme = localStorage.getItem('keymouse-theme'); if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme; } catch {}
+  </script>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="wrap header">
+    <a class="brand" href="#" aria-label="KeyMouse home"><img src="./assets/icon.png" width="34" height="34" alt="">KeyMouse</a>
+    <nav aria-label="Main navigation">
+      <a href="#controls">Controls</a><a href="#install">Install</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme" hidden><span aria-hidden="true" id="theme-icon">◐</span><span id="theme-label">Theme</span></button>
+    </nav>
+  </header>
+  <main id="main" class="wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow"><span class="status-dot"></span> FOR macOS 14 AND LATER</p>
+      <h1 id="hero-title">Control your mouse.<br>From your keyboard.</h1>
+      <p class="intro">Move, click, drag, and scroll with your keyboard.</p>
+      <a class="button" href="#install">Install from source <span aria-hidden="true">↗</span></a>
+    </section>
+    <section class="screenshots" aria-label="KeyMouse screenshots">
+      <figure>
+        <a href="./assets/controls.png" target="_blank" rel="noopener" aria-label="Open full Controls screenshot in a new tab"><div class="screenshot-stage"><img src="./assets/controls.png" width="1000" height="1348" alt="KeyMouse Controls settings showing activation options and configurable movement and click keys."></div></a>
+        <figcaption><strong>Controls.</strong> Set your activation gesture and key bindings.</figcaption>
+      </figure>
+      <figure>
+        <a href="./assets/motion.png" target="_blank" rel="noopener" aria-label="Open full Motion screenshot in a new tab"><div class="screenshot-stage"><img src="./assets/motion.png" width="1000" height="1348" alt="KeyMouse Motion settings with pointer speed, scroll speed, acceleration, and deceleration controls."></div></a>
+        <figcaption><strong>Motion.</strong> Adjust speed, acceleration, and stopping time.</figcaption>
+      </figure>
+    </section>
+    <section class="section controls" id="controls" aria-labelledby="controls-title">
+      <div class="section-heading"><h2 id="controls-title">Default controls</h2><p>Hold a click key while moving to drag. Tap twice to double-click.</p></div>
+      <dl class="key-list">
+        <div><dt>Move</dt><dd><span class="key-group"><kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></span><span class="key-note">or</span><kbd aria-label="Arrow keys">← ↓ ↑ →</kbd></dd></div>
+        <div><dt>Left click</dt><dd><kbd>Space</kbd><span class="key-note">or</span><kbd>W</kbd></dd></div>
+        <div><dt>Middle / right click</dt><dd><kbd>E</kbd><span class="key-note">/</span><kbd>R</kbd></dd></div>
+        <div><dt>Fast / slow</dt><dd><kbd>F</kbd><span class="key-note">/</span><kbd>D</kbd></dd></div>
+        <div><dt>Scroll</dt><dd><kbd>Shift</kbd><span class="key-note">+ movement keys</span></dd></div>
+        <div><dt>Stop</dt><dd><kbd>Esc</kbd></dd></div>
+      </dl>
+    </section>
+    <section class="section install" id="install" aria-labelledby="install-title">
+      <div class="section-heading"><h2 id="install-title">Install KeyMouse</h2><p>Requires macOS 14 or later and Xcode Command Line Tools to build.</p></div>
+      <div class="install-steps">
+        <div class="step"><span class="step-number">01</span><div><h3>Build and install</h3><p>Run this from the KeyMouse project folder.</p><div class="code-line"><code>./scripts/install-app.sh</code><button id="copy-command" type="button" hidden>Copy</button></div><span id="copy-status" class="sr-only" role="status"></span></div></div>
+        <div class="step"><span class="step-number">02</span><div><h3>Allow Accessibility access</h3><p>Open KeyMouse from Applications. Click Allow Access, then enable KeyMouse in System Settings → Privacy &amp; Security → Accessibility.</p></div></div>
+        <div class="step"><span class="step-number">03</span><div><h3>Double-tap <kbd>⌥ Option</kbd></h3><p>Use the keys above to control the pointer. Press <kbd>Esc</kbd> to stop. Change your activation key and gesture in Settings.</p></div></div>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer"><span>KeyMouse</span><span>Keyboard pointer control for macOS.</span><a href="#">Back to top ↑</a></footer>
+</body>
+</html>

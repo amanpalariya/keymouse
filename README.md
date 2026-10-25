@@ -1,46 +1,56 @@
 # KeyMouse
 
-Native macOS app with keyboard pointer controls and a menu bar shortcut. macOS 14 or later; no dependencies.
+Control the macOS pointer with your keyboard. Move, click, drag, and scroll.
+
+[Website](https://amanpalariya.github.io/keymouse/)
+
+## Install
+
+Requires macOS 14 or later and Xcode Command Line Tools.
 
 ```sh
+git clone https://github.com/amanpalariya/keymouse.git
+cd keymouse
 ./scripts/install-app.sh
-open "/Applications/KeyMouse.app"
+open /Applications/KeyMouse.app
 ```
 
-Launching the app opens Settings. The menu bar icon opens the cursor controls. Click **Allow Access**, then turn on **KeyMouse** in System Settings → Privacy & Security → Accessibility. If it is missing, use **+** to select it from Applications. The app checks access automatically. If a locally rebuilt app is already enabled but still unavailable, remove its old entry with **−**, then use **+** to add the current copy from Applications.
+Click **Allow Access**, then enable **KeyMouse** in **System Settings → Privacy & Security → Accessibility**. If it is missing, add `/Applications/KeyMouse.app`. If access stops working after a rebuild, remove the old Accessibility entry and add the app again.
 
-**Launch at login** is enabled on first launch. Turn it off in General settings. macOS may require approval in Login Items; the app shows a link when needed. Later changes made in macOS Settings are respected.
+## Controls
 
-Open KeyMouse from Applications or the Dock at any time, even when its menu bar icon is hidden. Enable **Show in menu bar** in General settings to restore it. Closing the window keeps keyboard controls running; use **Quit** to exit.
-
-Double-tap **Option** to toggle keyboard control. **Escape** cancels; 30 seconds of inactivity also stops it. Change these in Settings.
-
-Keyboard control also exits when you press an unbound key or move the pointer with a mouse, trackpad, or another input source. Both options are enabled by default and can be turned off independently in **Settings → General**. Unbound keys pass through to the current app only when they trigger an exit; otherwise they are swallowed while keyboard control is active. The activation key and configured controls keep working without triggering these exits.
+Double-tap <kbd>⌥ Option</kbd> to toggle keyboard control. Press <kbd>Esc</kbd> to stop.
 
 | Keys | Action |
 | --- | --- |
-| Arrows / H J K L | Left, down, up, right |
-| Space / W | Left button |
-| E | Middle button |
-| R | Right button |
-| Hold F | Fast |
-| Hold D | Slow |
-| Hold Shift | Scroll |
+| <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> or arrow keys | Move left, down, up, right |
+| <kbd>Space</kbd> or <kbd>W</kbd> | Left click |
+| <kbd>E</kbd> | Middle click |
+| <kbd>R</kbd> | Right click |
+| Hold <kbd>F</kbd> / <kbd>D</kbd> | Fast / slow movement |
+| Hold <kbd>Shift</kbd> + movement keys | Scroll |
 
-Acceleration and deceleration are enabled by default. Adjust its ramp time and initial speed, or turn either off, in **Settings → Motion**. Stopping time controls deceleration. Escape always stops immediately. Pointer speed is the maximum speed reached after the ramp.
+Hold a click key while moving to drag. Tap twice to double-click.
 
-Hold a button key while moving to drag. Combine controls: **D + Shift + J** scrolls down slowly. Double-click by tapping twice. A cyan-to-blue badge follows the cursor while active. The cursor inside the menu bar icon is outlined when inactive and solid when active, using the same system menu bar color in both states. The badge hides during Mission Control to avoid trailing the cursor, then returns when Mission Control closes. Settings persist automatically; settings changes stop an active session.
+Change activation and bindings in **Settings → Controls**. <kbd>Space</kbd> always left-clicks. Bindings use physical US keyboard positions. Adjust pointer speed, scrolling, acceleration, and deceleration in **Settings → Motion**.
 
-Record bindings in **Settings → Controls**: click a keycap and press a key. Escape cancels; used keys are rejected with a red keycap and a popover explaining the conflict. Space is a fixed left-click shortcut; the single left-click binding (W by default) is configurable. Shift can be recorded on either side of the keyboard. Bindings use physical US keyboard positions, independent of input language. Secure input fields and macOS-protected surfaces may prevent event capture.
+By default, control stops after 30 seconds of inactivity, on an unbound key, or when you move a physical pointer. Configure these in **Settings → General**. Launch at login is enabled on first launch. Closing Settings keeps the app running; choose **Quit** to exit.
 
 ## Development
 
 ```sh
-swift test # Requires Xcode (XCTest is not included in standalone Command Line Tools).
+./scripts/build-app.sh  # Build dist/KeyMouse.app without installing
+swift test             # Requires full Xcode for XCTest
 ```
 
-The build script uses ad-hoc signing by default. For stable Accessibility permissions across rebuilds, supply `SIGNING_IDENTITY` with an installed Apple signing identity. Distribution requires Developer ID signing and notarization. The app uses a filtering Core Graphics event tap and is built without App Sandbox.
+Run the app bundle rather than `swift run` so Accessibility permissions belong to the app. Builds use ad-hoc signing by default. Set `SIGNING_IDENTITY` to an installed Apple signing identity for stable permissions across rebuilds. Distribution requires Developer ID signing and notarization.
 
-Use `./scripts/build-app.sh` to build without installing. Run the app bundle rather than `swift run`, so permissions belong to the app.
+The app uses a filtering Core Graphics event tap without App Sandbox. Secure input fields and protected macOS surfaces may prevent keyboard capture.
 
-Built with SwiftUI, native AppKit panels and status items, [Service Management](https://developer.apple.com/documentation/servicemanagement/smappservice), and [Core Graphics event taps](https://developer.apple.com/documentation/coregraphics/cgevent). The arrowless menu bar panel uses native Liquid Glass on macOS 26 and later, with a system material fallback on older versions. Its material follows macOS appearance and accessibility settings.
+## Website
+
+Static files live in `docs/`. GitHub Pages publishes that folder from `main`.
+
+```sh
+python3 -m http.server 4173 --bind 127.0.0.1 --directory docs
+```
