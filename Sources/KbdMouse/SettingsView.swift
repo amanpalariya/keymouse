@@ -25,6 +25,7 @@ struct SettingsView: View {
 
   private var general: some View {
     Form {
+      ControlStatusView(engine: engine, preferences: preferences)
       AccessibilitySetupView(engine: engine)
       Section("App") {
         Toggle("Show in menu bar", isOn: $showMenuBarIcon)

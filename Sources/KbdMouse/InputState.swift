@@ -61,13 +61,17 @@ struct ActivationState {
       return config.gesture == .hold && candidate ? .activate : .none
     }
     if config.gesture == .hold { return .deactivate }
-    guard candidate, !otherModifiers, now - pressedAt < 0.4 else {
+    guard candidate, !otherModifiers else {
       interrupt()
       return .none
     }
     candidate = false
     if config.gesture == .tap { return .toggle }
-    if let lastTap, now - lastTap <= config.doubleTapInterval {
+    guard now - pressedAt <= 0.5 else {
+      interrupt()
+      return .none
+    }
+    if let lastTap, pressedAt - lastTap <= config.doubleTapInterval {
       self.lastTap = nil
       return .toggle
     }

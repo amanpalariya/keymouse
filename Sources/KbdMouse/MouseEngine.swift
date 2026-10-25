@@ -54,9 +54,11 @@ final class MouseEngine: ObservableObject {
   }
 
   private func startTimers() {
-    permissionTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+    let permissionTimer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
       self?.refreshPermission()
     }
+    RunLoop.main.add(permissionTimer, forMode: .common)
+    self.permissionTimer = permissionTimer
     let timer = Timer(timeInterval: 1 / 120, repeats: true) { [weak self] _ in self?.tick() }
     timer.tolerance = 0.002
     RunLoop.main.add(timer, forMode: .common)
@@ -76,18 +78,27 @@ final class MouseEngine: ObservableObject {
   }
 
   func refreshPermission() {
-    trusted = AXIsProcessTrusted()
+    let hasPermission = AXIsProcessTrusted()
+    if trusted != hasPermission { trusted = hasPermission }
     if trusted {
       eventTap.start { [weak self] type, event in
         self?.handle(type: type, event: event) ?? false
       }
       eventTap.enable()
-      connected = eventTap.isEnabled
+      if connected != eventTap.isEnabled { connected = eventTap.isEnabled }
     } else {
-      deactivate()
+      if active { deactivate() }
       eventTap.stop()
-      connected = false
+      if connected { connected = false }
     }
+  }
+
+  func reconnect() {
+    deactivate()
+    activation.reset()
+    eventTap.stop()
+    start()
+    refreshPermission()
   }
 
   func toggle() { active ? deactivate() : activate() }
@@ -116,6 +127,7 @@ final class MouseEngine: ObservableObject {
     timer = nil
     permissionTimer?.invalidate()
     permissionTimer = nil
+    subscriptions.removeAll()
     for observer in observers { NSWorkspace.shared.notificationCenter.removeObserver(observer) }
     observers.removeAll()
   }

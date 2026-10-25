@@ -83,6 +83,25 @@ final class InputTests: XCTestCase {
       activation.update(down: false, otherModifiers: false, now: 2.1, config: config), .none)
   }
 
+  func testStandaloneTapHasNoHiddenHoldDeadline() {
+    var activation = ActivationState()
+    var config = Configuration()
+    config.gesture = .tap
+    _ = activation.update(down: true, otherModifiers: false, now: 1, config: config)
+    XCTAssertEqual(
+      activation.update(down: false, otherModifiers: false, now: 1.6, config: config), .toggle)
+  }
+
+  func testDoubleTapIntervalMeasuresGapBeforeSecondPress() {
+    var activation = ActivationState()
+    let config = Configuration()
+    _ = activation.update(down: true, otherModifiers: false, now: 1, config: config)
+    _ = activation.update(down: false, otherModifiers: false, now: 1.15, config: config)
+    _ = activation.update(down: true, otherModifiers: false, now: 1.4, config: config)
+    XCTAssertEqual(
+      activation.update(down: false, otherModifiers: false, now: 1.6, config: config), .toggle)
+  }
+
   func testHoldReleaseAndExpiredDoubleTap() {
     var activation = ActivationState()
     var config = Configuration()

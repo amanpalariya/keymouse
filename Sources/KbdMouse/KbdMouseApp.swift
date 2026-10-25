@@ -13,7 +13,6 @@ struct KbdMouseApp: App {
     let engine = MouseEngine(preferences: preferences)
     _preferences = StateObject(wrappedValue: preferences)
     _engine = StateObject(wrappedValue: engine)
-    delegate.engine = engine
   }
 
   var body: some Scene {
@@ -30,6 +29,10 @@ struct KbdMouseApp: App {
       MenuContent(engine: engine, preferences: preferences)
     } label: {
       Label("Kbd Mouse", systemImage: engine.active ? "keyboard.fill" : "keyboard")
+        .task {
+          delegate.engine = engine
+          engine.start()
+        }
     }
   }
 }
@@ -37,10 +40,6 @@ struct KbdMouseApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
   weak var engine: MouseEngine?
   var reopenWindow: (() -> Void)?
-
-  func applicationDidFinishLaunching(_ notification: Notification) {
-    engine?.start()
-  }
 
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
     if !hasVisibleWindows { reopenWindow?() }
@@ -61,7 +60,9 @@ private struct AppWindow: View {
   var body: some View {
     SettingsView(preferences: preferences, engine: engine, loginItem: loginItem)
       .onAppear {
+        delegate.engine = engine
         delegate.reopenWindow = { openWindow(id: "main") }
+        engine.start()
         engine.deactivate()
         loginItem.configureDefault()
       }
@@ -90,7 +91,7 @@ struct MenuContent: View {
       Button(engine.active ? "Stop" : "Start") { engine.toggle() }
       Text("\(preferences.configuration.gesture.title) \(preferences.configuration.modifier.title)")
     } else {
-      OpenAppButton(title: "Set Up Accessibility…")
+      OpenAppButton(title: engine.trusted ? "Reconnect Keyboard Control…" : "Set Up Accessibility…")
     }
     Divider()
     OpenAppButton(title: "Open Kbd Mouse…")
