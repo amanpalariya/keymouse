@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-  name: "KbdMouse",
+  name: "KeyMouse",
   platforms: [.macOS(.v14)],
-  products: [.executable(name: "KbdMouse", targets: ["KbdMouse"])],
+  products: [.executable(name: "KeyMouse", targets: ["KeyMouse"])],
   targets: [
-    .executableTarget(name: "KbdMouse"),
-    .testTarget(name: "KbdMouseTests", dependencies: ["KbdMouse"]),
+    .executableTarget(name: "KeyMouse"),
+    .testTarget(name: "KeyMouseTests", dependencies: ["KeyMouse"]),
   ],
   swiftLanguageModes: [.v5]
 )

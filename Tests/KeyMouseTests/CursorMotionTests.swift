@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import KbdMouse
+@testable import KeyMouse
 
 final class CursorMotionTests: XCTestCase {
   private let display = CGRect(x: 0, y: 0, width: 1920, height: 1080)

@@ -85,7 +85,6 @@ enum ActivationGesture: String, Codable, CaseIterable, Identifiable {
 struct Configuration: Codable, Equatable {
   var modifier: ActivationModifier = .option
   var gesture: ActivationGesture = .doubleTap
-  var doubleTapInterval: Double = 0.35
   var escapeCancels = true
   var timeoutEnabled = true
   var idleTimeout: Double = 30
@@ -102,7 +101,7 @@ struct Configuration: Codable, Equatable {
   init() {}
 
   private enum CodingKeys: String, CodingKey {
-    case modifier, gesture, doubleTapInterval, escapeCancels, timeoutEnabled, idleTimeout
+    case modifier, gesture, escapeCancels, timeoutEnabled, idleTimeout
     case showBadge, arrowsEnabled, moveSpeed, scrollSpeed, fastMultiplier, slowMultiplier
     case reverseScroll, bindings, acceleration
   }
@@ -112,8 +111,6 @@ struct Configuration: Codable, Equatable {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     modifier = try values.decodeIfPresent(ActivationModifier.self, forKey: .modifier) ?? modifier
     gesture = try values.decodeIfPresent(ActivationGesture.self, forKey: .gesture) ?? gesture
-    doubleTapInterval =
-      try values.decodeIfPresent(Double.self, forKey: .doubleTapInterval) ?? doubleTapInterval
     escapeCancels = try values.decodeIfPresent(Bool.self, forKey: .escapeCancels) ?? escapeCancels
     timeoutEnabled =
       try values.decodeIfPresent(Bool.self, forKey: .timeoutEnabled) ?? timeoutEnabled

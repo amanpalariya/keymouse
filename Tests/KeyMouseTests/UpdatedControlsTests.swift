@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import KbdMouse
+@testable import KeyMouse
 
 final class UpdatedControlsTests: XCTestCase {
   func testNewDefaultsAndFixedSpaceShortcut() {

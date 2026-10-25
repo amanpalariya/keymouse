@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import KbdMouse
+@testable import KeyMouse
 
 final class BindingConflictTests: XCTestCase {
   func testConflictDoesNotChangeEitherBinding() {
@@ -38,7 +38,7 @@ final class BindingConflictTests: XCTestCase {
   }
 
   private func withPreferences(_ test: (Preferences) -> Void) {
-    let name = "KbdMouseTests.\(UUID().uuidString)"
+    let name = "KeyMouseTests.\(UUID().uuidString)"
     let defaults = UserDefaults(suiteName: name)!
     defer { defaults.removePersistentDomain(forName: name) }
     test(Preferences(defaults: defaults))

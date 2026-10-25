@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import KbdMouse
+@testable import KeyMouse
 
 final class InputTests: XCTestCase {
   func testCombinedSlowScrollAndDirection() {

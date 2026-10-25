@@ -35,6 +35,7 @@ struct InputState {
 }
 
 struct ActivationState {
+  static let doubleTapInterval: TimeInterval = 0.35
   private var isDown = false
   private var candidate = false
   private var pressedAt: TimeInterval = 0
@@ -70,7 +71,7 @@ struct ActivationState {
       interrupt()
       return .none
     }
-    if let lastTap, pressedAt - lastTap <= config.doubleTapInterval {
+    if let lastTap, pressedAt - lastTap <= Self.doubleTapInterval {
       self.lastTap = nil
       return .toggle
     }

@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import KbdMouse
+@testable import KeyMouse
 
 final class AccelerationTests: XCTestCase {
   private let right = CGVector(dx: 1, dy: 0)

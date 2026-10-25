@@ -1,7 +1,8 @@
 import AppKit
 
-/// A keycap and pointer mark shared by the app, menu bar, and cursor badge.
+/// A cursor contained in a keycap, shared by the app and menu bar.
 enum BrandArtwork {
+  static let accent = NSColor(srgbRed: 0.44, green: 0.25, blue: 0.95, alpha: 1)
   static func symbol(size: CGFloat, color: NSColor = .labelColor, template: Bool = false) -> NSImage
   {
     let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
@@ -36,24 +37,14 @@ enum BrandArtwork {
   private static func drawMark(color: NSColor) {
     color.setStroke()
     let key = NSBezierPath(
-      roundedRect: NSRect(x: 2, y: 8, width: 23, height: 22), xRadius: 5, yRadius: 5)
+      roundedRect: NSRect(x: 2, y: 2, width: 28, height: 28), xRadius: 6, yRadius: 6)
     key.lineWidth = 2
     key.stroke()
-    let lines = NSBezierPath()
-    lines.lineWidth = 2
-    lines.lineCapStyle = .round
-    for x in [7.0, 12.0, 17.0] {
-      lines.move(to: CGPoint(x: x, y: 23))
-      lines.line(to: CGPoint(x: x + 1, y: 23))
-    }
-    lines.move(to: CGPoint(x: 7, y: 17))
-    lines.line(to: CGPoint(x: 13, y: 17))
-    lines.stroke()
     let pointer = NSBezierPath()
-    pointer.move(to: CGPoint(x: 17, y: 19))
+    pointer.move(to: CGPoint(x: 11, y: 25))
     for point in [
-      CGPoint(x: 30, y: 9), CGPoint(x: 24, y: 8), CGPoint(x: 27, y: 2),
-      CGPoint(x: 23, y: 0), CGPoint(x: 20, y: 7), CGPoint(x: 16, y: 3),
+      CGPoint(x: 23, y: 14), CGPoint(x: 17.8, y: 13.1), CGPoint(x: 20.7, y: 7.1),
+      CGPoint(x: 17.5, y: 5.5), CGPoint(x: 14.4, y: 11.8), CGPoint(x: 10.8, y: 8.4),
     ] {
       pointer.line(to: point)
     }

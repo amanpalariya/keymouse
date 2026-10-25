@@ -40,21 +40,9 @@ struct SettingsView: View {
   }
 
   private func paneButton(_ title: String, id: String, symbol: String) -> some View {
-    Button {
+    SettingsTabButton(title: title, symbol: symbol, isSelected: selectedPane == id) {
       selectedPane = id
-    } label: {
-      VStack(spacing: 4) {
-        Image(systemName: symbol).font(.system(size: 22))
-        Text(title).font(.callout)
-      }
-      .frame(width: 68, height: 50)
-      .foregroundStyle(selectedPane == id ? Color.accentColor : Color.secondary)
-      .background(
-        selectedPane == id ? Color.primary.opacity(0.06) : .clear,
-        in: RoundedRectangle(cornerRadius: 8))
-    }
-    .buttonStyle(.plain)
-    .accessibilityValue(selectedPane == id ? "Selected" : "")
+    }.id(id)
   }
 
   private func pane<Content: View>(@ViewBuilder content: () -> Content) -> some View {
@@ -114,12 +102,9 @@ struct SettingsView: View {
         }
       }
       HStack {
-        Text("Kbd Mouse · 1.0").foregroundStyle(.tertiary)
+        Text("Key Mouse · 1.0").foregroundStyle(.tertiary)
         Spacer()
-        Button("Reset All Settings", role: .destructive) {
-          preferences.configuration = Configuration()
-        }
-        .buttonStyle(.borderedProminent).tint(.red).controlSize(.regular).font(.body)
+        ResetButton(title: "Reset All Settings") { preferences.configuration = Configuration() }
       }.font(.caption)
     }
   }
@@ -141,12 +126,6 @@ struct SettingsView: View {
             ForEach(ActivationModifier.allCases) { Text("\($0.symbol)  \($0.title)").tag($0) }
           }.labelsHidden().frame(width: 150)
         }
-        if preferences.configuration.gesture == .doubleTap {
-          PreferenceDivider()
-          PreferenceSlider(
-            title: "Tap Interval", symbol: "metronome", color: .purple,
-            value: $preferences.configuration.doubleTapInterval, range: 0.2...0.6, format: "%.2f s")
-        }
       }
       PreferenceCard {
         PreferenceToggle(
@@ -159,9 +138,7 @@ struct SettingsView: View {
       bindingCard(
         [.primary, .middle, .secondary], color: .pink)
       bindingCard([.fast, .slow, .scroll], color: .orange)
-      Button("Reset Keys", role: .destructive) {
-        bindingEditor.reset(in: preferences)
-      }.buttonStyle(.borderedProminent).tint(.red).controlSize(.regular)
+      ResetButton(title: "Reset Keys") { bindingEditor.reset(in: preferences) }
     }
   }
 
@@ -234,9 +211,7 @@ struct SettingsView: View {
           title: "Reverse Scrolling", symbol: "arrow.up.arrow.down", color: .green,
           isOn: $preferences.configuration.reverseScroll)
       }
-      Button("Reset Motion", role: .destructive) {
-        preferences.configuration.resetMotion()
-      }.buttonStyle(.borderedProminent).tint(.red).controlSize(.regular)
+      ResetButton(title: "Reset Motion") { preferences.configuration.resetMotion() }
     }
   }
 }

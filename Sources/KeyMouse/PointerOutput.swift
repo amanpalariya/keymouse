@@ -2,7 +2,7 @@ import AppKit
 
 /// The only component that creates and posts synthetic mouse events.
 final class PointerOutput {
-  static let eventMarker: Int64 = 0x4B42_444D
+  static let eventMarker: Int64 = 0x4B45_594D
   private let source = CGEventSource(stateID: .hidSystemState)
   private var scrollRemainder = CGVector.zero
   private var motion = CursorMotion()

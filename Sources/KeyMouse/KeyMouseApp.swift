@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct KbdMouseApp: App {
+struct KeyMouseApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
   @StateObject private var preferences: Preferences
   @StateObject private var engine: MouseEngine
@@ -9,6 +9,7 @@ struct KbdMouseApp: App {
   @AppStorage("showMenuBarIcon") private var showMenuBarIcon = true
 
   init() {
+    DefaultsMigration.importLegacyIfNeeded(into: .standard)
     let preferences = Preferences()
     let engine = MouseEngine(preferences: preferences)
     _preferences = StateObject(wrappedValue: preferences)
@@ -16,7 +17,7 @@ struct KbdMouseApp: App {
   }
 
   var body: some Scene {
-    Window("Kbd Mouse Settings", id: "settings") {
+    Window("Key Mouse Settings", id: "settings") {
       SettingsWindow(
         preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate)
     }
@@ -31,7 +32,7 @@ struct KbdMouseApp: App {
       MenuBarView(engine: engine, preferences: preferences)
     } label: {
       Image(nsImage: BrandArtwork.symbol(size: 20, template: true))
-        .accessibilityLabel("Kbd Mouse")
+        .accessibilityLabel("Key Mouse")
         .task {
           delegate.engine = engine
           engine.start()
