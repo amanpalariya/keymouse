@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 
 /// An arrowless menu bar panel backed by the system's current glass material.
@@ -12,11 +13,17 @@ final class MenuBarController: NSObject, ObservableObject {
   private var openSettings: (() -> Void)?
   private var localMonitor: Any?
   private var globalMonitor: Any?
+  private var activitySubscription: AnyCancellable?
+  private let inactiveImage = BrandArtwork.symbol(size: 20, template: true, filled: false)
+  private let activeImage = BrandArtwork.symbol(size: 20, template: true, filled: true)
 
   init(engine: MouseEngine, preferences: Preferences) {
     self.engine = engine
     self.preferences = preferences
     super.init()
+    activitySubscription = engine.$active.removeDuplicates().sink { [weak self] active in
+      self?.updateStatusAppearance(active: active)
+    }
   }
 
   private func preparePanel() {
@@ -73,9 +80,6 @@ final class MenuBarController: NSObject, ObservableObject {
     guard statusItem == nil else { return }
     let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     if let button = item.button {
-      button.image = BrandArtwork.symbol(size: 20, template: true)
-      button.setAccessibilityLabel("Key Mouse")
-      button.toolTip = "Key Mouse"
       if #available(macOS 27, *) {
         // Let the menu bar own selection, tracking, and keyboard navigation.
         item.expandedInterfaceDelegate = self
@@ -86,6 +90,15 @@ final class MenuBarController: NSObject, ObservableObject {
       }
     }
     statusItem = item
+    updateStatusAppearance(active: engine.active)
+  }
+
+  private func updateStatusAppearance(active: Bool) {
+    guard let button = statusItem?.button else { return }
+    button.image = active ? activeImage : inactiveImage
+    let description = active ? "Key Mouse — Active" : "Key Mouse — Inactive"
+    button.setAccessibilityLabel(description)
+    button.toolTip = description
   }
 
   @objc private func togglePanel() {

@@ -29,7 +29,7 @@ Keyboard control also exits when you press an unbound key or move the pointer wi
 
 Acceleration and deceleration are enabled by default. Adjust its ramp time and initial speed, or turn either off, in **Settings → Motion**. Stopping time controls deceleration. Escape always stops immediately. Pointer speed is the maximum speed reached after the ramp.
 
-Hold a button key while moving to drag. Combine controls: **D + Shift + J** scrolls down slowly. Double-click by tapping twice. A badge follows the cursor while active. Settings persist automatically; settings changes stop an active session.
+Hold a button key while moving to drag. Combine controls: **D + Shift + J** scrolls down slowly. Double-click by tapping twice. A cyan-to-blue badge follows the cursor while active. The cursor inside the menu bar icon is outlined when inactive and solid when active, using the same system menu bar color in both states. The badge hides during Mission Control to avoid trailing the cursor, then returns when Mission Control closes. Settings persist automatically; settings changes stop an active session.
 
 Record bindings in **Settings → Controls**: click a keycap and press a key. Escape cancels; used keys are rejected with a red keycap and a popover explaining the conflict. Space is a fixed left-click shortcut; the single left-click binding (W by default) is configurable. Shift can be recorded on either side of the keyboard. Bindings use physical US keyboard positions, independent of input language. Secure input fields and macOS-protected surfaces may prevent event capture.
 

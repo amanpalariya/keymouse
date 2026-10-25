@@ -45,8 +45,10 @@ final class CursorBadge {
     panel.hidesOnDeactivate = false
     panel.ignoresMouseEvents = true
     panel.level = .screenSaver
+    // Let WindowServer hide the overlay in Mission Control. A separate window
+    // cannot track the hardware cursor reliably during its compositor animations.
     panel.collectionBehavior = [
-      .canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle,
+      .canJoinAllSpaces, .fullScreenAuxiliary, .transient, .ignoresCycle,
     ]
     panel.contentView = CursorDotView(frame: frame)
     self.panel = panel
@@ -57,7 +59,11 @@ final class CursorDotView: NSView {
   override var isOpaque: Bool { false }
 
   override func draw(_ dirtyRect: NSRect) {
-    BrandArtwork.accent.setFill()
-    NSBezierPath(ovalIn: bounds).fill()
+    let dot = NSBezierPath(ovalIn: bounds.insetBy(dx: 0.5, dy: 0.5))
+    BrandArtwork.activeGradient.draw(in: dot, angle: -65)
+    // A fine white edge keeps the blue visible over dark and blue backgrounds.
+    NSColor.white.withAlphaComponent(0.85).setStroke()
+    dot.lineWidth = 0.75
+    dot.stroke()
   }
 }
