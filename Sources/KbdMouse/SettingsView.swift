@@ -88,7 +88,7 @@ struct SettingsView: View {
         Text("Kbd Mouse · 1.0").foregroundStyle(.tertiary)
         Spacer()
         Button("Reset All Settings") { preferences.configuration = Configuration() }
-          .buttonStyle(.link)
+          .buttonStyle(.bordered).controlSize(.regular).font(.body)
       }.font(.caption)
     }
   }
@@ -117,10 +117,9 @@ struct SettingsView: View {
             value: $preferences.configuration.doubleTapInterval, range: 0.2...0.6, format: "%.2f s")
         }
       }
-      Text(bindingEditor.message).font(.caption).foregroundStyle(.secondary)
       PreferenceCard {
         PreferenceToggle(
-          title: "Arrow Keys Also Move", symbol: "arrowkeys", color: .blue,
+          title: "Arrow Keys", symbol: "arrowkeys", color: .blue,
           isOn: $preferences.configuration.arrowsEnabled)
       }
       bindingCard(
@@ -131,7 +130,7 @@ struct SettingsView: View {
       bindingCard([.fast, .slow, .scroll], color: .orange)
       Button("Reset Keys") {
         bindingEditor.reset(in: preferences)
-      }.buttonStyle(.link).font(.caption)
+      }.buttonStyle(.bordered).controlSize(.regular)
     }
   }
 

@@ -15,7 +15,6 @@ struct BindingConflict: Equatable {
 }
 
 final class KeyBindingEditor: ObservableObject {
-  @Published private(set) var message = "Click a keycap, then press a key. Escape cancels."
   @Published private(set) var conflict: BindingConflict?
 
   func bind(_ action: MouseAction, to key: UInt16, in preferences: Preferences) {
@@ -32,7 +31,6 @@ final class KeyBindingEditor: ObservableObject {
     }
     guard preferences.configuration.bind(action, to: key) else { return }
     conflict = nil
-    message = "\(action.title) set to \(KeyChoice.title(for: key))."
   }
 
   func dismissConflict() { conflict = nil }
@@ -40,6 +38,5 @@ final class KeyBindingEditor: ObservableObject {
   func reset(in preferences: Preferences) {
     preferences.configuration.bindings = Configuration.defaultBindings
     conflict = nil
-    message = "Keys restored to defaults."
   }
 }
