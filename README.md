@@ -43,4 +43,4 @@ The build script uses ad-hoc signing by default. For stable Accessibility permis
 
 Use `./scripts/build-app.sh` to build without installing. Run the app bundle rather than `swift run`, so permissions belong to the app.
 
-Built with SwiftUI [MenuBarExtra](https://developer.apple.com/documentation/swiftui/menubarextra), [Service Management](https://developer.apple.com/documentation/servicemanagement/smappservice), and [Core Graphics event taps](https://developer.apple.com/documentation/coregraphics/cgevent).
+Built with SwiftUI, native AppKit panels and status items, [Service Management](https://developer.apple.com/documentation/servicemanagement/smappservice), and [Core Graphics event taps](https://developer.apple.com/documentation/coregraphics/cgevent). The arrowless menu bar panel uses native Liquid Glass on macOS 26 and later, with a system material fallback on older versions. Its material follows macOS appearance and accessibility settings.

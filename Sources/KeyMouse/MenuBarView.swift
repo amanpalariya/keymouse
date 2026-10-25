@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuBarView: View {
   @ObservedObject var engine: MouseEngine
   @ObservedObject var preferences: Preferences
+  var openSettings: () -> Void
 
   var body: some View {
     VStack(spacing: 18) {
@@ -11,12 +12,22 @@ struct MenuBarView: View {
         Image(nsImage: BrandArtwork.appIcon(size: 64)).accessibilityHidden(true)
         Text(statusTitle).font(.system(size: 18, weight: .semibold))
         if engine.connected {
-          Text(activationHint).font(.callout).foregroundStyle(.secondary)
-          Button(engine.active ? "Stop" : "Start") { engine.toggle() }
+          Button { engine.toggle() } label: {
+            Label {
+              Text(engine.active ? "Stop" : "Start")
+            } icon: {
+              HStack(spacing: 2) {
+                ForEach(0..<(preferences.configuration.gesture == .doubleTap ? 2 : 1), id: \.self) {
+                  _ in Image(systemName: preferences.configuration.modifier.systemImage)
+                }
+              }.accessibilityHidden(true)
+            }
+          }
             .buttonStyle(.borderedProminent).controlSize(.large)
             .tint(.blue).frame(maxWidth: .infinity)
+            .help(activationHint).accessibilityHint(activationHint)
         } else {
-          OpenSettingsButton(title: engine.trusted ? "Reconnect…" : "Enable Accessibility…")
+          Button(engine.trusted ? "Reconnect…" : "Enable Accessibility…", action: openSettings)
             .buttonStyle(.borderedProminent).tint(.blue)
         }
       }.padding(.vertical, 6)
@@ -31,8 +42,6 @@ struct MenuBarView: View {
         shortcutRow(
           "Speed / Scroll", symbol: "speedometer", color: .orange, keys: [.fast, .slow, .scroll])
       }
-      Text("Hold a click key to drag. Escape to stop.")
-        .font(.caption).foregroundStyle(.secondary)
     }
     .padding(18)
     .frame(width: 340)
@@ -43,7 +52,7 @@ struct MenuBarView: View {
       Text("Key Mouse").font(.headline)
       HStack {
         Menu {
-          OpenSettingsButton(title: "Settings…").keyboardShortcut(",")
+          Button("Settings…", action: openSettings).keyboardShortcut(",")
           Divider()
           Button("Quit Key Mouse") {
             engine.shutdown()

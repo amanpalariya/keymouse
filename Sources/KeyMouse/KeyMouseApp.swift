@@ -5,6 +5,7 @@ struct KeyMouseApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
   @StateObject private var preferences: Preferences
   @StateObject private var engine: MouseEngine
+  @StateObject private var menuBar: MenuBarController
   @StateObject private var loginItem = LoginItem()
   @AppStorage("showMenuBarIcon") private var showMenuBarIcon = true
 
@@ -14,12 +15,14 @@ struct KeyMouseApp: App {
     let engine = MouseEngine(preferences: preferences)
     _preferences = StateObject(wrappedValue: preferences)
     _engine = StateObject(wrappedValue: engine)
+    _menuBar = StateObject(wrappedValue: MenuBarController(engine: engine, preferences: preferences))
   }
 
   var body: some Scene {
     Window("Key Mouse Settings", id: "settings") {
       SettingsWindow(
-        preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate)
+        preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate,
+        menuBar: menuBar, showMenuBarIcon: showMenuBarIcon)
     }
     .windowResizability(.contentSize)
     .windowToolbarStyle(.expanded)
@@ -28,16 +31,6 @@ struct KeyMouseApp: App {
         OpenSettingsButton(title: "Settings…").keyboardShortcut(",")
       }
     }
-    MenuBarExtra(isInserted: $showMenuBarIcon) {
-      MenuBarView(engine: engine, preferences: preferences)
-    } label: {
-      Image(nsImage: BrandArtwork.symbol(size: 20, template: true))
-        .accessibilityLabel("Key Mouse")
-        .task {
-          delegate.engine = engine
-          engine.start()
-        }
-    }.menuBarExtraStyle(.window)
   }
 }
 
@@ -59,6 +52,8 @@ private struct SettingsWindow: View {
   let engine: MouseEngine
   @ObservedObject var loginItem: LoginItem
   let delegate: AppDelegate
+  let menuBar: MenuBarController
+  let showMenuBarIcon: Bool
   @Environment(\.openWindow) private var openWindow
 
   var body: some View {
@@ -71,6 +66,11 @@ private struct SettingsWindow: View {
         }
         engine.start()
         loginItem.configureDefault()
+        menuBar.configure(isVisible: showMenuBarIcon) {
+          openWindow(id: "settings")
+          NSApp.activate(ignoringOtherApps: true)
+        }
       }
+      .onChange(of: showMenuBarIcon) { _, visible in menuBar.setVisible(visible) }
   }
 }
