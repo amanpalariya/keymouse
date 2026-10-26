@@ -84,7 +84,7 @@ enum ActivationGesture: String, Codable, CaseIterable, Identifiable {
 
 struct Configuration: Codable, Equatable {
   var modifier: ActivationModifier = .option
-  var gesture: ActivationGesture = .doubleTap
+  var gesture: ActivationGesture = .tap
   var escapeCancels = true
   var exitOnUnboundKey = true
   var exitOnPointerMovement = true

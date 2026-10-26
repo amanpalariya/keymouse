@@ -60,7 +60,8 @@ final class InputTests: XCTestCase {
 
   func testDoubleTapRequiresTwoStandaloneTaps() {
     var activation = ActivationState()
-    let config = Configuration()
+    var config = Configuration()
+    config.gesture = .doubleTap
     XCTAssertEqual(
       activation.update(down: true, otherModifiers: false, now: 1, config: config), .none)
     XCTAssertEqual(
@@ -83,10 +84,11 @@ final class InputTests: XCTestCase {
       activation.update(down: false, otherModifiers: false, now: 2.1, config: config), .none)
   }
 
-  func testStandaloneTapHasNoHiddenHoldDeadline() {
+  func testDefaultOptionTapActivatesWithoutHiddenHoldDeadline() {
     var activation = ActivationState()
-    var config = Configuration()
-    config.gesture = .tap
+    let config = Configuration()
+    XCTAssertEqual(config.modifier, .option)
+    XCTAssertEqual(config.gesture, .tap)
     _ = activation.update(down: true, otherModifiers: false, now: 1, config: config)
     XCTAssertEqual(
       activation.update(down: false, otherModifiers: false, now: 1.6, config: config), .toggle)
@@ -94,7 +96,8 @@ final class InputTests: XCTestCase {
 
   func testDoubleTapIntervalMeasuresGapBeforeSecondPress() {
     var activation = ActivationState()
-    let config = Configuration()
+    var config = Configuration()
+    config.gesture = .doubleTap
     _ = activation.update(down: true, otherModifiers: false, now: 1, config: config)
     _ = activation.update(down: false, otherModifiers: false, now: 1.15, config: config)
     _ = activation.update(down: true, otherModifiers: false, now: 1.4, config: config)
@@ -104,7 +107,8 @@ final class InputTests: XCTestCase {
 
   func testExpiredDoubleTapDoesNotActivate() {
     var activation = ActivationState()
-    let config = Configuration()
+    var config = Configuration()
+    config.gesture = .doubleTap
     _ = activation.update(down: true, otherModifiers: false, now: 3, config: config)
     _ = activation.update(down: false, otherModifiers: false, now: 3.1, config: config)
     _ = activation.update(down: true, otherModifiers: false, now: 4, config: config)

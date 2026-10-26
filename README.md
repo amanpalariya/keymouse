@@ -19,7 +19,7 @@ Click **Allow Access**, then enable **KeyMouse** in **System Settings → Privac
 
 ## Controls
 
-Double-tap <kbd>⌥ Option</kbd> to toggle keyboard control. Press <kbd>Esc</kbd> to stop.
+Tap <kbd>⌥ Option</kbd> to toggle keyboard control. Press <kbd>Esc</kbd> to stop.
 
 | Keys | Action |
 | --- | --- |

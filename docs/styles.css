@@ -7,3 +7,6 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 .step kbd{font-size:11px;padding:1px 5px;min-width:0;vertical-align:baseline}h3 kbd{font-size:12px}
+
+.github-link{display:inline-flex;align-items:center;gap:7px;font-size:14px}.github-icon{flex-shrink:0}.hero-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:18px 24px}.hero-actions .github-link{text-decoration:none;color:var(--muted)}.hero-actions .github-link:hover{color:var(--text)}
+@media(max-width:450px){.header{flex-wrap:wrap;justify-content:center;gap:14px;padding-block:18px}.header nav{flex-wrap:wrap;justify-content:center}}

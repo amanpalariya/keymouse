@@ -40,6 +40,7 @@ final class RenameMigrationTests: XCTestCase {
     var saved =
       try JSONSerialization.jsonObject(with: JSONEncoder().encode(Configuration()))
       as! [String: Any]
+    saved["gesture"] = ActivationGesture.doubleTap.rawValue
     saved["doubleTapInterval"] = 10
     let configuration = try JSONDecoder().decode(
       Configuration.self,
