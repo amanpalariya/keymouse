@@ -45,7 +45,7 @@ swift test             # Requires full Xcode for XCTest
 
 Run the app bundle rather than `swift run` so Accessibility permissions belong to the app. Builds use ad-hoc signing by default. Set `SIGNING_IDENTITY` to an installed Apple signing identity for stable permissions across rebuilds. Distribution requires Developer ID signing and notarization.
 
-The build script explicitly links against the selected macOS SDK and verifies the executable's recorded SDK version before packaging. macOS 14 remains the minimum deployment target. The menu bar uses a standard AppKit popover with system-managed appearance and dismissal.
+The build script explicitly links against the selected macOS SDK and verifies the executable's recorded SDK version before packaging. macOS 14 remains the minimum deployment target. The menu bar uses an AppKit popover with explicit status-button toggling, outside-click dismissal, and Escape handling.
 
 The app uses a filtering Core Graphics event tap without App Sandbox. Secure input fields and protected macOS surfaces may prevent keyboard capture.
 

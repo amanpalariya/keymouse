@@ -10,6 +10,8 @@ final class MenuBarController: NSObject, ObservableObject {
   private let popover = NSPopover()
   private var openSettings: (() -> Void)?
   private var activitySubscription: AnyCancellable?
+  private var localEventMonitor: Any?
+  private var globalEventMonitor: Any?
   private let inactiveImage = BrandArtwork.symbol(size: 20, template: true, filled: false)
   private let activeImage = BrandArtwork.symbol(size: 20, template: true, filled: true)
 
@@ -30,7 +32,9 @@ final class MenuBarController: NSObject, ObservableObject {
       self?.openSettings?()
     })
     hosting.sizingOptions = [.preferredContentSize]
-    popover.behavior = .transient
+    // Own dismissal so the status button cannot close and immediately reopen
+    // the popover during the same click.
+    popover.behavior = .applicationDefined
     popover.delegate = self
     popover.contentViewController = hosting
     popover.contentSize = hosting.view.fittingSize
@@ -51,13 +55,9 @@ final class MenuBarController: NSObject, ObservableObject {
     guard statusItem == nil else { return }
     let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     if let button = item.button {
-      if #available(macOS 27, *) {
-        // Let the menu bar own selection, tracking, and keyboard navigation.
-        item.expandedInterfaceDelegate = self
-      } else {
-        button.target = self
-        button.action = #selector(togglePopover)
-      }
+      button.target = self
+      button.action = #selector(togglePopover)
+      button.sendAction(on: [.leftMouseDown])
     }
     statusItem = item
     updateStatusAppearance(active: engine.active)
@@ -83,27 +83,54 @@ final class MenuBarController: NSObject, ObservableObject {
     guard let button = statusItem?.button else { return }
     preparePopover()
     popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+    startDismissalMonitoring()
   }
+
+  private func startDismissalMonitoring() {
+    stopDismissalMonitoring()
+    let clicks: NSEvent.EventTypeMask = [.leftMouseDown, .rightMouseDown, .otherMouseDown]
+    globalEventMonitor = NSEvent.addGlobalMonitorForEvents(matching: clicks) { [weak self] _ in
+      self?.popover.performClose(nil)
+    }
+    localEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [clicks, .keyDown]) {
+      [weak self] event in
+      guard let self, self.popover.isShown else { return event }
+      if event.type == .keyDown {
+        if event.keyCode == 53 {
+          self.popover.performClose(nil)
+          return nil
+        }
+        return event
+      }
+      // Let the status button handle its own click exactly once.
+      if let button = self.statusItem?.button, event.window === button.window,
+        button.bounds.contains(button.convert(event.locationInWindow, from: nil)) {
+        return event
+      }
+      if let window = self.popover.contentViewController?.view.window {
+        var clickedWindow = event.window
+        while let candidate = clickedWindow {
+          if candidate === window { return event }
+          clickedWindow = candidate.parent
+        }
+      }
+      self.popover.performClose(nil)
+      return event
+    }
+  }
+
+  private func stopDismissalMonitoring() {
+    if let localEventMonitor { NSEvent.removeMonitor(localEventMonitor) }
+    if let globalEventMonitor { NSEvent.removeMonitor(globalEventMonitor) }
+    localEventMonitor = nil
+    globalEventMonitor = nil
+  }
+
+  deinit { stopDismissalMonitoring() }
 }
 
 extension MenuBarController: NSPopoverDelegate {
   func popoverDidClose(_ notification: Notification) {
-    if #available(macOS 27, *) {
-      statusItem?.expandedInterfaceSession?.cancel()
-    }
-  }
-}
-
-@available(macOS 27, *)
-extension MenuBarController: NSStatusItemExpandedInterfaceDelegate {
-  func statusItem(
-    _ statusItem: NSStatusItem,
-    didBegin expandedInterfaceSession: NSStatusItemExpandedInterfaceSession
-  ) {
-    showPopover()
-  }
-
-  func statusItemDidEndExpandedInterfaceSession(_ statusItem: NSStatusItem, animated: Bool) {
-    popover.performClose(nil)
+    stopDismissalMonitoring()
   }
 }
