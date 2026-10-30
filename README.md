@@ -34,7 +34,7 @@ Hold a click key while moving to drag. Tap twice to double-click.
 
 Change activation and bindings in **Settings → Controls**. <kbd>Space</kbd> always left-clicks. Bindings use physical US keyboard positions. Adjust pointer speed, scrolling, acceleration, and deceleration in **Settings → Motion**.
 
-By default, control stops after 30 seconds of inactivity, on an unbound key, or when you move a physical pointer. Configure these in **Settings → General**. Launch at login is enabled on first launch. Closing Settings keeps the app running; choose **Quit** to exit.
+By default, control stops after 30 seconds of inactivity, on an unbound key, or when you move a physical pointer. Configure these in **Settings → General**. Launch at login is enabled on first launch. KeyMouse runs in the background without a Dock icon. Closing Settings keeps keyboard control running; choose **Quit** in the menu bar to exit. Open Settings from the menu bar, or open KeyMouse again from Applications if the menu bar icon is hidden.
 
 ## Development
 

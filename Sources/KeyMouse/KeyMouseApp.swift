@@ -1,28 +1,13 @@
+import Combine
 import SwiftUI
 
 @main
 struct KeyMouseApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
-  @StateObject private var preferences: Preferences
-  @StateObject private var engine: MouseEngine
-  @StateObject private var menuBar: MenuBarController
-  @StateObject private var loginItem = LoginItem()
-  @AppStorage("showMenuBarIcon") private var showMenuBarIcon = true
-
-  init() {
-    DefaultsMigration.importLegacyIfNeeded(into: .standard)
-    let preferences = Preferences()
-    let engine = MouseEngine(preferences: preferences)
-    _preferences = StateObject(wrappedValue: preferences)
-    _engine = StateObject(wrappedValue: engine)
-    _menuBar = StateObject(wrappedValue: MenuBarController(engine: engine, preferences: preferences))
-  }
 
   var body: some Scene {
     Window("KeyMouse Settings", id: "settings") {
-      SettingsWindow(
-        preferences: preferences, engine: engine, loginItem: loginItem, delegate: delegate,
-        menuBar: menuBar, showMenuBarIcon: showMenuBarIcon)
+      SettingsWindow(delegate: delegate)
     }
     .windowResizability(.contentSize)
     .windowToolbarStyle(.expanded)
@@ -34,9 +19,43 @@ struct KeyMouseApp: App {
   }
 }
 
+/// Owns the keyboard service independently of the settings window's lifetime.
 final class AppDelegate: NSObject, NSApplicationDelegate {
-  weak var engine: MouseEngine?
+  let preferences: Preferences
+  let engine: MouseEngine
+  let menuBar: MenuBarController
+  let loginItem: LoginItem
   var reopenWindow: (() -> Void)?
+  private var defaultsSubscription: AnyCancellable?
+
+  override init() {
+    DefaultsMigration.importLegacyIfNeeded(into: .standard)
+    let preferences = Preferences()
+    let engine = MouseEngine(preferences: preferences)
+    self.preferences = preferences
+    self.engine = engine
+    menuBar = MenuBarController(engine: engine, preferences: preferences)
+    loginItem = LoginItem()
+    super.init()
+  }
+
+  func applicationDidFinishLaunching(_ notification: Notification) {
+    engine.start()
+    loginItem.configureDefault()
+    menuBar.configure(isVisible: menuBarIsVisible) { [weak self] in
+      self?.reopenWindow?()
+    }
+    defaultsSubscription = NotificationCenter.default.publisher(
+      for: UserDefaults.didChangeNotification, object: UserDefaults.standard
+    ).receive(on: RunLoop.main).sink { [weak self] _ in
+      guard let self else { return }
+      self.menuBar.setVisible(self.menuBarIsVisible)
+    }
+  }
+
+  private var menuBarIsVisible: Bool {
+    UserDefaults.standard.object(forKey: "showMenuBarIcon") as? Bool ?? true
+  }
 
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
     reopenWindow?()
@@ -44,33 +63,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
-  func applicationWillTerminate(_ notification: Notification) { engine?.shutdown() }
+
+  func applicationWillTerminate(_ notification: Notification) {
+    defaultsSubscription = nil
+    engine.shutdown()
+  }
 }
 
 private struct SettingsWindow: View {
-  let preferences: Preferences
-  let engine: MouseEngine
-  @ObservedObject var loginItem: LoginItem
   let delegate: AppDelegate
-  let menuBar: MenuBarController
-  let showMenuBarIcon: Bool
   @Environment(\.openWindow) private var openWindow
 
   var body: some View {
-    SettingsView(preferences: preferences, engine: engine, loginItem: loginItem)
+    SettingsView(
+      preferences: delegate.preferences, engine: delegate.engine, loginItem: delegate.loginItem)
       .onAppear {
-        delegate.engine = engine
         delegate.reopenWindow = {
           openWindow(id: "settings")
           NSApp.activate(ignoringOtherApps: true)
         }
-        engine.start()
-        loginItem.configureDefault()
-        menuBar.configure(isVisible: showMenuBarIcon) {
-          openWindow(id: "settings")
-          NSApp.activate(ignoringOtherApps: true)
-        }
       }
-      .onChange(of: showMenuBarIcon) { _, visible in menuBar.setVisible(visible) }
   }
 }
