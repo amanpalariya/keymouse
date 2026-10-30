@@ -1,8 +1,19 @@
-# KeyMouse
+<p align="center">
+  <a href="https://amanpalariya.github.io/keymouse/">
+    <img src="docs/assets/icon.png" alt="KeyMouse icon" width="128" height="128">
+  </a>
+</p>
 
-Control the macOS pointer with your keyboard. Move, click, drag, and scroll.
+<h1 align="center">KeyMouse</h1>
 
-[Website](https://amanpalariya.github.io/keymouse/)
+<p align="center">
+  Control the macOS pointer with your keyboard.<br>
+  Move, click, drag, and scroll.
+</p>
+
+<p align="center">
+  <a href="https://amanpalariya.github.io/keymouse/">Visit the website →</a>
+</p>
 
 ## Install
 
