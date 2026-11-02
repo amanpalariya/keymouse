@@ -1,6 +1,6 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { Cursor, lerp, tween } from "../design";
+import { Cursor, lerp, tween, inputFeedback } from "../design";
 import { Stage } from "../stage";
 import { Keyboard } from "../Keyboard";
 import { MouseVisual } from "../MouseVisual";
@@ -43,6 +43,15 @@ export const Move: React.FC = () => {
     W: ["W", "Space"],
   };
   const active = pressed.flatMap((key) => equivalents[key] ?? [key]);
+  const feedback = inputFeedback(t, [
+    { start: 1.2, end: 1.55, keys: ["←"] },
+    { start: 1.7, end: 2.05, keys: ["↓"] },
+    { start: 2.2, end: 2.55, keys: ["↑"] },
+    { start: 2.7, end: 3.05, keys: ["→"] },
+    { start: 3.7, end: 4.45, keys: ["W"] },
+    { start: 4.65, end: 5.4, keys: ["E"] },
+    { start: 5.6, end: 6.35, keys: ["R"] },
+  ]);
   const mouseX = lerp(t, [1.2, 1.55, 2.7, 3.05], [0, -55, -55, 0]);
   const mouseY = lerp(t, [1.7, 2.05, 2.2, 2.55], [0, 28, 28, 0]);
   return (
@@ -123,7 +132,8 @@ export const Move: React.FC = () => {
           y={cursorY}
           size={43}
           light
-          pressed={pressed}
+          pressed={feedback.keys}
+          hintOpacity={feedback.opacity}
           press={
             (t > 3.7 && t < 3.88) ||
             (t > 4.65 && t < 4.83) ||

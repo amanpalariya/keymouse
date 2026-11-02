@@ -1,21 +1,20 @@
-# KeyMouse — In Full Control / V4
+# KeyMouse — In Full Control / V5
 
-74 seconds · 1920 × 1080 · 60 fps · 120 BPM
+78 seconds · 1920 × 1080 · 60 fps · 120 BPM
 
 A dark product film built around recognizable tasks. The application content
 uses the former title space. There are no large action headings or plus-sign
 separators. Tall windows extend below the frame, with compact input feedback
 beside the action and a small reference dock.
 
-| Time  | Use case                 | What the viewer sees                                                                                                                     |
-| ----- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| 00–04 | Stay on the keys         | Beveled 3D flying cursor and HJKL                                                                                                        |
-| 04–14 | Understand the keyboard  | Stable map, alias highlights, mouse moving with HJKL/arrows and lighting left/middle/right for W/E/R                                     |
-| 14–40 | Prepare a release note   | Space checks an item and selects a word; separate R examples on text and an image; E flies an asset into a new browser tab               |
-| 40–48 | Browse the linked assets | Shift and arrows scroll a populated grid, with pauses to see the result                                                                  |
-| 48–58 | Reach two small controls | F and an arrow cross the preview; D and an arrow make the accurate final approach. Repeat in the opposite direction, holding each result |
-| 58–70 | Move tasks to Done       | Two separate Space-and-arrow drags on a populated board, with pickup, movement, release and result holds                                 |
-| 70–74 | Every move. Yours        | 3D cursor fly-out; Option to Start, Escape to Stop                                                                                       |
+| Time  | Use case           | What the viewer sees                                                                                                                                                                                |
+| ----- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 00–04 | Stay on the keys   | Beveled 3D flying cursor and HJKL                                                                                                                                                                   |
+| 04–14 | Keyboard overview  | Preserved V4 keyboard, shared mouse perspective, aliases and sustained click highlights                                                                                                             |
+| 14–40 | Research a lake    | A minimal Wikipedia reading view: select the depth fact, R → Copy, R → Save Image As → Save, and E on Crater Lake to compare in a new background tab                                                |
+| 40–62 | Scroll and retouch | One continuous photo editor and canvas. Scroll vertically and horizontally, then normal → fast → slow movement to heal two small spots. The viewport, zoom, tool, cursor position and image persist |
+| 62–74 | Move and reorder   | Drag Launch video to the right, release it, then pick up the same card and drag downward. App icon moves up to make the new ordering clear                                                          |
+| 74–78 | Every move. Yours  | 3D cursor fly-out; Option to Start, Escape to Stop                                                                                                                                                  |
 
 ## Current controls and visual decisions
 
@@ -30,19 +29,36 @@ beside the action and a small reference dock.
   and both share one perspective transform. HJKL/arrow movement shifts the
   mouse in sync; it stops during clicks. The pointer stays beside W/E/R
   during those presses rather than moving in response to clicks.
-- The click examples are grouped: Space examples, then two R examples, then E.
-  A click only labels that click key, without distracting movement chords.
-- Selection is a standard double-click word selection. The right-click cases
-  show distinct text and image context menus and linger, without mixing in a
-  left-click menu choice. There is no mouse overlay in the click scene and
+- The click examples follow research tasks: copy a fact, save a photo, and
+  open a related article to compare. Each result gets a reading hold.
+  The menu choices now complete useful tasks rather than dismissing the menu.
+  Key feedback identifies the action being performed.
+- Selection follows a horizontal text drag and remains synchronized with the
+  pointer. The right-click cases show distinct text and image context menus
+  and linger before the menu choice. Space chooses Copy and saves the image, with visible
+  results and pauses. There is no mouse overlay in the click scene and
   links carry no northeast arrow or other new-tab hint.
-- The E case visibly flies the asset tile into the real tab strip, then holds
-  the completed tab. The linked asset browser follows in the next scene.
-- Every current application scene and popup is dark. The board and release
-  page contain useful app data rather than marketing paragraphs.
+- The E case visibly flies the Crater Lake link into the real tab strip, then holds
+  the completed tab. The source article stays open while Crater Lake opens
+  in the background.
+- Every current application scene and popup is dark, with neutral application
+  colors independent of the film branding. Wikipedia uses a minimal reading view with real article facts and photography.
+  There is no invented release-note website or footer. Keyboard hints sit above
+  each application window, never over cards or canvas content.
+- The article uses one grid and shared header alignment, with larger reading
+  sizes: 46 px title, 20 px body/facts, 18 px fact labels and 16 px navigation.
+  Pointer, selection and link targets are measured after fonts load, keeping
+  every action aligned as type sizes or layout change.
+- The board has a Trello-style workspace sidebar, view tabs, filter and avatar.
+  The pointer stays on the card after each drop. During the downward reorder,
+  App icon stays in its slot until the crossing threshold, then slides quickly
+  into the top slot independently of the dragged card.
+- Released pointer key badges hold for 0.18 seconds and fade over 0.5 seconds.
+  Actual pressed states, clicks and keycaps still release at their real time.
+  This is deterministic for playback, seeking and rendering.
 
-- Every scene boundary has an 18-frame crossfade with overlap accounted for
-  in the timeline. Menus and precision tooltips ease in/out; dragged cards
+- Every separate scene boundary has an 18-frame crossfade with overlap accounted for
+  in the timeline. The scroll-to-retouch boundary has been removed entirely. Menus ease in/out; dragged cards
   lift and settle smoothly. Extra holds preserve input speed while allowing
   time to see completed results.
 - Fast/slow and drag remain separate use cases. Direction badges appear
@@ -57,8 +73,8 @@ The existing tonal UI accents remain quiet. No swipes or movement effects.
 
 Current 48 kHz stereo assets:
 
-- `public/audio/in-full-control-original-clean-v4.wav`
-- `public/audio/workflow-accents-v4.wav`
+- `public/audio/in-full-control-original-clean-v5.wav`
+- `public/audio/workflow-accents-v5-final.wav`
 
 `python scripts/score.py` rebuilds these tracks with numpy. Unique asset names
 ensure Studio loads the replacement rather than cached audio.
@@ -69,16 +85,24 @@ V1 is saved at Git tag `codex/keymouse-video-v1` (`5d546ee`) and remains playabl
 under **Saved → KeyMouse-v1** with independent sources and original audio.
 V2 is preserved at `codex/keymouse-video-v2` (`7afaa3c`) and V3 at
 `codex/keymouse-video-v3` (`226afe1`). V4 is saved at
-`codex/keymouse-video-v4`. The default **KeyMouse**
+`codex/keymouse-video-v4` (`7da1be4`). V5 is saved at
+`codex/keymouse-video-v5`. The default **KeyMouse**
 composition is the current edit. Historical versions retain their original
 appearance and sound.
+
+## Assets
+
+See [asset provenance and generation prompt](public/ASSETS.md). The Wikipedia
+article and embedded photograph retain their source attribution. The separate
+editor photograph was created with the built-in image-generation tool.
 
 ## Editing
 
 `npm run dev -- --no-open` starts Studio. Feature scenes are registered under
 **Scenes**, including focused Select and Context views. `npm run lint` runs
 ESLint and TypeScript; `npm run build` bundles the project. Fonts and media
-are local. Demo interfaces illustrate real KeyMouse controls; they are not
-screen recordings.
+are local. The browser content is a simplified reading view of the real Wikipedia article;
+the input, menu, dialog and tab animations illustrate real KeyMouse controls.
+The photo editor and board are code-native application illustrations.
 
 Export on demand: `npx remotion render KeyMouse out/keymouse.mp4`.

@@ -1,14 +1,14 @@
-"""Original KeyMouse score + V4 soundtrack: original music with noise percussion removed. No sampled or third-party audio.
+"""Original KeyMouse score + V5 soundtrack: original music with noise percussion removed. No sampled or third-party audio.
 
 Rebuild with Python 3 and numpy: python scripts/score.py
-74 seconds, 120 BPM, D minor, 48 kHz stereo. Deterministic synthesis.
+78 seconds, 120 BPM, D minor, 48 kHz stereo. Deterministic synthesis.
 """
 from pathlib import Path
 import wave
 import numpy as np
 
 SR = 48000
-DURATION = 74
+DURATION = 78
 N = SR * DURATION
 music = np.zeros((N, 2), dtype=np.float64)
 effects = np.zeros_like(music)
@@ -98,27 +98,31 @@ def tine(at,note=62,level=.08):
 def confirm(at):
     tine(at,69,.065)
     tine(at+.11,74,.045)
-for at in [4,14,40,48,58,70]:tine(at,62,.06)
+for at in [4,14,40,62,74]:tine(at,62,.06)
 tine(.18,62,.045)
 for at,note in [(5.2,65),(5.7,62),(6.2,67),(6.7,69),(7.7,65),(8.65,69),(9.6,74)]:tine(at,note,.035)
-# Space cases, then two R cases, then E and its arriving tab.
-confirm(15.1)
-tine(18.4,69,.04)
-tine(18.8,72,.04)
-tine(23.1,65,.05)
-tine(28.2,65,.05)
-tine(32.4,69,.05)
-confirm(33.65)
-# Pointer-only precision case, separate from the drag use case.
-tine(48.6,67,.03)
-tine(50.2,62,.03)
-tine(53.1,67,.03)
-tine(54.7,62,.03)
-tine(58.85,62,.04)
-confirm(62.9)
-tine(66.5,62,.04)
-confirm(68.9)
-confirm(70.5)
+# Research workflow: select a depth fact, copy, save a photo, compare lakes.
+tine(16,69,.035)
+tine(19,65,.045)
+confirm(21.4)
+tine(24.5,65,.045)
+tine(27.4,69,.035)
+confirm(29.2)
+tine(34,69,.045)
+confirm(35.5)
+# One uninterrupted photo editor: canvas scroll, then two precise repairs.
+tine(50.1,67,.03)
+tine(51.5,62,.03)
+confirm(53.2)
+tine(55.8,67,.03)
+tine(57.7,62,.03)
+confirm(59.4)
+# Horizontal drop, then vertical reorder of the same card.
+tine(62.85,62,.04)
+confirm(66.9)
+tine(70.5,62,.04)
+confirm(72.9)
+confirm(74.5)
 ts=np.arange(N)/SR
 music*=(.72+.28*(1-np.exp(-np.mod(ts,.5)/.07)))[:,None]
 music*=np.minimum(ts/.25,1)[:,None]*np.clip((DURATION-ts)/1.6,0,1)[:,None]
@@ -131,5 +135,5 @@ def write(name,track,peak):
     with wave.open(str(out),'wb') as wav:
         wav.setnchannels(2);wav.setsampwidth(2);wav.setframerate(SR);wav.writeframes(pcm.tobytes())
     print(f'{name}: {DURATION}s stereo, peak {20*np.log10(np.max(np.abs(track))):.1f} dBFS, RMS {20*np.log10(np.sqrt(np.mean(track**2))):.1f} dBFS')
-write('in-full-control-original-clean-v4.wav',music,.70)
-write('workflow-accents-v4.wav',effects,.32)
+write('in-full-control-original-clean-v5.wav',music,.70)
+write('workflow-accents-v5-final.wav',effects,.32)

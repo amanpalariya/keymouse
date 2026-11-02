@@ -47,6 +47,22 @@ export const lerp = (t: number, times: number[], values: number[]) =>
     easing: Easing.inOut(Easing.cubic),
   });
 
+// Keep released input badges readable, independently of the actual press state.
+export const inputFeedback = (
+  t: number,
+  events: { start: number; end: number; keys: string[] }[],
+) => {
+  const event = [...events].reverse().find((item) => item.start <= t);
+  if (!event) return { keys: [], opacity: 0 };
+  const opacity =
+    1 -
+    interpolate(t, [event.end + 0.18, event.end + 0.68], [0, 1], {
+      ...clamp,
+      easing: Easing.inOut(Easing.quad),
+    });
+  return { keys: opacity > 0 ? event.keys : [], opacity };
+};
+
 export const Backdrop: React.FC<{
   light?: boolean;
   children?: React.ReactNode;
@@ -403,7 +419,19 @@ export const Cursor: React.FC<{
   light?: boolean;
   label?: string;
   pressed?: string[];
-}> = ({ x, y, size = 43, press, light, label, pressed = [] }) => (
+  shape?: "arrow" | "brush";
+  hintOpacity?: number;
+}> = ({
+  x,
+  y,
+  size = 43,
+  press,
+  light,
+  label,
+  pressed = [],
+  shape = "arrow",
+  hintOpacity = 1,
+}) => (
   <div
     style={{
       position: "absolute",
@@ -419,8 +447,8 @@ export const Cursor: React.FC<{
       <div
         style={{
           position: "absolute",
-          left: -16,
-          top: -16,
+          left: (size * 2) / 35 - 29,
+          top: (size * 2) / 35 - 29,
           width: 58,
           height: 58,
           border: "2px solid #4a8eff77",
@@ -429,14 +457,40 @@ export const Cursor: React.FC<{
         }}
       />
     ) : null}
-    <svg width={size} height={(size * 46) / 35} viewBox="0 0 35 46">
-      <path
-        d="M2 2L30 26L18 28L25 41L18 45L11 31L2 39Z"
-        fill={light ? "#f7fbff" : "#17273f"}
-        stroke={light ? "#23354b" : "white"}
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
+    <svg
+      width={size}
+      height={(size * 46) / 35}
+      viewBox="0 0 35 46"
+      style={{ overflow: "visible" }}
+    >
+      {shape === "brush" ? (
+        <>
+          <circle
+            cx="2"
+            cy="2"
+            r="12"
+            fill="none"
+            stroke="#172434"
+            strokeWidth="2.2"
+          />
+          <circle
+            cx="2"
+            cy="2"
+            r="12"
+            fill="none"
+            stroke="#f6fbff"
+            strokeWidth="1"
+          />
+        </>
+      ) : (
+        <path
+          d="M2 2L30 26L18 28L25 41L18 45L11 31L2 39Z"
+          fill={light ? "#f7fbff" : "#17273f"}
+          stroke={light ? "#23354b" : "white"}
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+        />
+      )}
     </svg>
     {pressed.length ? (
       <div
@@ -451,6 +505,7 @@ export const Cursor: React.FC<{
           background: "#0c172de8",
           border: "1px solid #8bc6ff44",
           whiteSpace: "nowrap",
+          opacity: hintOpacity,
         }}
       >
         {pressed.map((key) => (

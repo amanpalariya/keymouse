@@ -6,6 +6,7 @@ import { Scroll } from "./scenes/Scroll";
 import { Select } from "./scenes/Select";
 import { Context } from "./scenes/Context";
 import { Precision } from "./scenes/Precision";
+import { PhotoWorkflow } from "./scenes/PhotoWorkflow";
 import { Drag } from "./scenes/Drag";
 import { Clicks } from "./scenes/Clicks";
 import { Closing } from "./scenes/Closing";
@@ -21,16 +22,24 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         fps={60}
-        durationInFrames={4440}
+        durationInFrames={4680}
       />
       <Folder name="Scenes">
+        <Composition
+          id="Photo-workflow"
+          component={PhotoWorkflow}
+          width={1920}
+          height={1080}
+          fps={60}
+          durationInFrames={1320}
+        />
         <Composition
           id="Precision"
           component={Precision}
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={600}
+          durationInFrames={840}
         />
         <Composition
           id="Clicks"
@@ -70,7 +79,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={480}
+          durationInFrames={600}
         />
         <Composition
           id="Context-and-middle-click"

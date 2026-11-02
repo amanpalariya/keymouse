@@ -5,7 +5,8 @@ import { Backdrop, BrandMark, C, font, tween } from "./design";
 export const AppWindow: React.FC<{
   title: string;
   style?: React.CSSProperties;
-}> = ({ title, style }) => {
+  chrome?: string;
+}> = ({ title, style, chrome = "#1a283d" }) => {
   const t = useCurrentFrame() / useVideoConfig().fps;
   return (
     <div
@@ -32,7 +33,7 @@ export const AppWindow: React.FC<{
           alignItems: "center",
           gap: 11,
           padding: "0 25px",
-          background: "#1a283d",
+          background: chrome,
           borderBottom: "1px solid #7193c322",
         }}
       >
@@ -112,7 +113,9 @@ export const InputDock: React.FC<{
       position: "absolute",
       left: 0,
       right: 0,
-      bottom: 32,
+      top: 108,
+      scale: 0.65,
+      transformOrigin: "center top",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",

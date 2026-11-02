@@ -8,7 +8,11 @@ export const BrowserFrame: React.FC<{
   loading?: number;
 }> = ({ active = "draft", assetsProgress = 0, loading = 1 }) => (
   <>
-    <AppWindow title="Release workspace" />
+    <AppWindow
+      title="Lake Tahoe — Wikipedia"
+      chrome="#292b31"
+      style={{ background: "#191b20", borderColor: "#55575c" }}
+    />
     <div
       style={{
         position: "absolute",
@@ -16,7 +20,7 @@ export const BrowserFrame: React.FC<{
         top: 265,
         width: 1538,
         height: 62,
-        background: "#152239",
+        background: "#222429",
         display: "flex",
         alignItems: "end",
         gap: 8,
@@ -28,7 +32,7 @@ export const BrowserFrame: React.FC<{
           height: 51,
           width: 310,
           borderRadius: "13px 13px 0 0",
-          background: active === "draft" ? "#23354e" : "#182a41",
+          background: active === "draft" ? "#34363c" : "#282a30",
           display: "flex",
           alignItems: "center",
           gap: 14,
@@ -43,16 +47,16 @@ export const BrowserFrame: React.FC<{
             width: 24,
             height: 24,
             borderRadius: 6,
-            background: "#6cabf5",
-            color: "#142d4b",
+            background: "#eceef0",
+            color: "#111111",
             textAlign: "center",
             fontSize: 16,
             paddingTop: 2,
           }}
         >
-          N
+          W
         </span>
-        Release note<span style={{ marginLeft: "auto", opacity: 0.4 }}>×</span>
+        Lake Tahoe<span style={{ marginLeft: "auto", opacity: 0.4 }}>×</span>
       </div>
       {assetsProgress > 0 ? (
         <div
@@ -61,7 +65,7 @@ export const BrowserFrame: React.FC<{
             height: 51,
             width: assetsProgress * 340,
             borderRadius: "13px 13px 0 0",
-            background: active === "assets" ? "#23354e" : "#1c304a",
+            background: active === "assets" ? "#34363c" : "#292d34",
             border: "1px solid #8dc9ff80",
             borderBottom: "none",
             overflow: "hidden",
@@ -88,15 +92,15 @@ export const BrowserFrame: React.FC<{
                 width: 24,
                 height: 24,
                 borderRadius: 6,
-                background: "#b3a8ec",
-                color: "#282f5a",
+                background: "#eceef0",
+                color: "#111111",
                 textAlign: "center",
                 fontSize: 17,
               }}
             >
-              A
+              W
             </span>
-            Launch assets
+            Crater Lake
             <span style={{ marginLeft: "auto", opacity: 0.4 }}>×</span>
           </div>
           <div
@@ -119,7 +123,7 @@ export const BrowserFrame: React.FC<{
         top: 327,
         width: 1538,
         height: 61,
-        background: "#23354e",
+        background: "#34363c",
         display: "flex",
         alignItems: "center",
         padding: "0 30px",
@@ -135,7 +139,7 @@ export const BrowserFrame: React.FC<{
           height: 36,
           flex: 1,
           borderRadius: 10,
-          background: "#142238",
+          background: "#202228",
           display: "flex",
           alignItems: "center",
           padding: "0 20px",
@@ -144,8 +148,8 @@ export const BrowserFrame: React.FC<{
       >
         ◇{" "}
         <span style={{ marginLeft: 14 }}>
-          workspace.local/
-          {active === "assets" ? "launch-assets" : "release-note"}
+          en.wikipedia.org/wiki/
+          {active === "assets" ? "Crater_Lake" : "Lake_Tahoe"}
         </span>
       </div>
       <span style={{ fontSize: 25 }}>⋯</span>
