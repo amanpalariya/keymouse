@@ -60,7 +60,7 @@ export const Film: React.FC = () => {
         />
         <TransitionSeries.Sequence
           name="04 — Scroll and retouch / one continuous canvas"
-          durationInFrames={19 * fps + Math.round(0.5 * fps)}
+          durationInFrames={18 * fps + Math.round(0.5 * fps)}
           premountFor={fps}
         >
           <PhotoWorkflow />
@@ -96,13 +96,13 @@ export const Film: React.FC = () => {
       </TransitionSeries>
       <Audio
         name="In Full Control — original music, rustle removed"
-        src={staticFile("audio/in-full-control-original-clean-v8.wav")}
+        src={staticFile("audio/in-full-control-original-clean-v9.wav")}
         premountFor={fps}
         volume={0.8}
       />
       <Audio
         name="Designed sound — soft tine accents / no swipes"
-        src={staticFile("audio/workflow-accents-v8.wav")}
+        src={staticFile("audio/workflow-accents-v9.wav")}
         premountFor={fps}
         volume={0.35}
       />

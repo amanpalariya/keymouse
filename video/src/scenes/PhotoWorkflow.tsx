@@ -1,15 +1,14 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Cursor, Key, lerp, tween, inputFeedback } from "../design";
-import { scrollTime } from "../pacing";
+import { scrollTime, photoTime } from "../pacing";
 import { PhotoEditor, LakePhoto } from "../PhotoEditor";
 import { InputDock, Stage } from "../stage";
 
 export const PhotoWorkflow: React.FC<{ offset?: number }> = ({
   offset = 0,
 }) => {
-  const elapsed =
-    (useCurrentFrame() / useVideoConfig().fps) * 1.1578947368421053 + offset;
+  const elapsed = photoTime(useCurrentFrame() / useVideoConfig().fps) + offset;
   const s = scrollTime(Math.min(elapsed, 8));
   const t = elapsed - 8;
   const sy = lerp(s, [0.8, 2.5, 2.9, 3.9], [0, -330, -330, -130]);

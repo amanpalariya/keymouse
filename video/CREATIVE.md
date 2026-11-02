@@ -1,6 +1,6 @@
 # KeyMouse — In Full Control / V5
 
-59 seconds · 1920 × 1080 · 60 fps · 120 BPM
+58 seconds · 1920 × 1080 · 60 fps · 120 BPM
 
 A dark product film built around recognizable tasks. The application content
 uses the former title space. There are no large action headings or plus-sign
@@ -12,9 +12,9 @@ beside the action and a small reference dock.
 | 00–04 | Opener          | Flying keys and cursor                                |
 | 04–11 | Keyboard        | Neutral hardware and drifting camera                  |
 | 11–29 | Research a lake | Copy, save, compare; compressed waits between actions |
-| 29–48 | Photo workflow  | Continuous canvas scroll and retouch                  |
-| 48–55 | Board           | Right drag, brief release, then downward reorder      |
-| 55–59 | KeyMouse        | Actual app icon and name, surrounded by floating keys |
+| 29–47 | Photo workflow  | Continuous canvas scroll and retouch                  |
+| 47–54 | Board           | Right drag, brief release, then downward reorder      |
+| 54–58 | KeyMouse        | Actual app icon and name, surrounded by floating keys |
 
 ## Current controls and visual decisions
 
@@ -73,8 +73,8 @@ The existing tonal UI accents remain quiet. No swipes or movement effects.
 
 Current 48 kHz stereo assets:
 
-- `public/audio/in-full-control-original-clean-v8.wav`
-- `public/audio/workflow-accents-v8.wav`
+- `public/audio/in-full-control-original-clean-v9.wav`
+- `public/audio/workflow-accents-v9.wav`
 
 `python scripts/score.py` rebuilds these tracks with numpy. Unique asset names
 ensure Studio loads the replacement rather than cached audio.
@@ -123,3 +123,7 @@ replaced by a centered icon/name composition. Flying keys continue the opener.
 Piecewise action clocks remove dead time without uniformly speeding gestures;
 all targets, selection, reorder behavior, input hints and audio accents follow
 the same clocks. V6 remains unchanged.
+
+Photo pacing refinement: scrolling starts after 1.4 seconds of scene lead-in.
+Retouch approach gaps are about 0.3 seconds, and the pause between the two
+repairs is about 0.4 seconds. The final result hold is shortened as well.
