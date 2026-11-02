@@ -7,30 +7,67 @@ import {
   useVideoConfig,
 } from "remotion";
 import { C, Cursor, fontsReady, Key, lerp, tween } from "../design";
-import { AppWindow, Stage } from "../stage";
+import { Stage } from "../stage";
+import { BrowserFrame } from "../BrowserFrame";
 import { MouseVisual } from "../MouseVisual";
 
 const TEXT_LEFT = 310;
-const TEXT_TOP = 450;
+const AssetCard: React.FC<{
+  title: string;
+  color: string;
+  style?: React.CSSProperties;
+}> = ({ title, color, style }) => (
+  <div
+    style={{
+      position: "absolute",
+      width: 420,
+      height: 210,
+      borderRadius: 22,
+      border: "1px solid #679bd655",
+      background: `linear-gradient(135deg,${color},#162a40)`,
+      padding: 27,
+      ...style,
+    }}
+  >
+    <div
+      style={{
+        width: 76,
+        height: 76,
+        border: "14px solid #a6d8ff77",
+        borderRadius: 19,
+        rotate: "-14deg",
+        marginLeft: 12,
+        marginTop: 4,
+      }}
+    />
+    <div
+      style={{
+        position: "absolute",
+        left: 27,
+        bottom: 25,
+        fontSize: 27,
+        fontWeight: 650,
+        color: "#b6d9ff",
+      }}
+    >
+      {title}
+    </div>
+  </div>
+);
 
 export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
-  const t = (useCurrentFrame() / useVideoConfig().fps) * (5 / 7) + offset;
-  const sentenceRef = useRef<HTMLSpanElement>(null);
+  const t = useCurrentFrame() / useVideoConfig().fps + offset;
   const wordRef = useRef<HTMLSpanElement>(null);
-  const [handle] = useState(() => delayRender("Measure selection geometry"));
-  const [metrics, setMetrics] = useState({ width: 1100, wordX: 730 });
+  const [handle] = useState(() => delayRender("Measure the selected word"));
+  const [wordX, setWordX] = useState(730);
   useEffect(() => {
     let live = true;
     fontsReady
       .then(() => {
         if (!live) return;
-        const sentence = sentenceRef.current;
         const word = wordRef.current;
-        if (!sentence || !word) throw new Error("Selection text did not mount");
-        setMetrics({
-          width: sentence.offsetWidth,
-          wordX: TEXT_LEFT + word.offsetLeft + word.offsetWidth * 0.55,
-        });
+        if (!word) throw new Error("Selection word not mounted");
+        setWordX(TEXT_LEFT + word.offsetLeft + word.offsetWidth * 0.55);
         continueRender(handle);
       })
       .catch(cancelRender);
@@ -38,373 +75,253 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
       live = false;
     };
   }, [handle]);
-
-  const progress = lerp(t, [1.15, 2.75], [0, 1]);
-  // The highlight and cursor share the exact same eased position, including the hotspot.
-  const selectionX = TEXT_LEFT + metrics.width * progress;
-  const selectionWidth = selectionX - TEXT_LEFT;
-  const double = t >= 4.5;
-  const menu = t >= 6.65 && t < 8.05;
-  const tabOpen = t >= 9;
   const space =
-    (t > 1.1 && t < 3.2) ||
-    (t > 4.25 && t < 4.4) ||
-    (t > 4.5 && t < 4.65) ||
-    (t > 8.0 && t < 8.16);
-  const right = t > 6.65 && t < 6.9;
-  const middle = t > 9 && t < 9.22;
-  const title =
-    t < 0.8
-      ? "Click."
-      : t < 3.7
-        ? "Select."
-        : t < 6
-          ? "Double-click."
-          : t < 8.5
-            ? "Right-click."
-            : "Middle-click.";
-  let x: number;
-  let y: number;
-  let pressed: string[] = [];
-  if (t < 1.15) {
-    x = lerp(t, [0, 0.8], [1450, TEXT_LEFT]);
-    y = lerp(t, [0, 0.8], [800, 535]);
-    if (t > 0.05 && t < 0.8) pressed = ["←", "↑"];
-  } else if (t < 3.4) {
-    x = selectionX;
-    y = 535;
-    if (t < 3.2) pressed = t < 2.75 ? ["Space", "→"] : ["Space"];
-  } else if (t < 6.65) {
-    x = lerp(t, [3.4, 4.1], [TEXT_LEFT + metrics.width, metrics.wordX]);
-    y = lerp(t, [3.4, 4.1], [535, 535]);
-    if (t < 4.1) pressed = ["←"];
-    else if (space) pressed = ["Space"];
-  } else if (t < 8.15) {
-    x = lerp(t, [6.9, 7.35], [metrics.wordX, metrics.wordX + 140]);
-    y = lerp(t, [6.9, 7.35], [535, 575]);
-    if (right) pressed = ["R"];
-    else if (t < 7.35) pressed = ["→", "↓"];
-    else if (space) pressed = ["Space"];
+    (t > 1.1 && t < 1.45) || (t > 3.4 && t < 3.65) || (t > 3.8 && t < 4.05);
+  const right = (t > 7.1 && t < 7.9) || (t > 11.2 && t < 12);
+  const middle = t > 15.4 && t < 15.8;
+  const wordSelected = t >= 3.8;
+  const menuWord = t >= 7.1 && t < 9.5;
+  const menuAsset = t >= 11.2 && t < 13.8;
+  let x: number, y: number;
+  if (t < 2.7) {
+    x = lerp(t, [0, 0.8], [1450, 265]);
+    y = lerp(t, [0, 0.8], [800, 503]);
+  } else if (t < 9.5) {
+    x = lerp(t, [2.7, 3.2], [265, wordX]);
+    y = lerp(t, [2.7, 3.2], [503, 535]);
+  } else if (t < 13.8) {
+    x = lerp(t, [9.5, 10.5], [wordX, 620]);
+    y = lerp(t, [9.5, 10.5], [535, 720]);
   } else {
-    x = lerp(t, [8.15, 8.75], [metrics.wordX + 140, 430]);
-    y = lerp(t, [8.15, 8.75], [575, 810]);
-    if (t < 8.75) pressed = ["←", "↓"];
-    else if (middle) pressed = ["E"];
+    x = lerp(t, [13.8, 14.8], [620, 430]);
+    y = lerp(t, [13.8, 14.8], [720, 810]);
   }
-
+  const mouseWord = tween(t, 6.7, 7.1) * (1 - tween(t, 9.3, 9.6));
+  const mouseAsset = tween(t, 10.8, 11.2) * (1 - tween(t, 13.6, 14));
+  const normalX = x + 205,
+    normalY = 630 + (y - 535) * (-10 / 275);
+  const mouseX =
+    normalX * (1 - mouseWord - mouseAsset) +
+    (wordX - 190) * mouseWord +
+    430 * mouseAsset;
+  const mouseY =
+    normalY * (1 - mouseWord - mouseAsset) + 570 * mouseWord + 680 * mouseAsset;
+  const flight = lerp(t, [15.4, 16.65], [0, 1]);
   return (
-    <Stage title={title}>
-      <AppWindow title="Browser" />
+    <Stage demo>
+      <BrowserFrame
+        assetsProgress={tween(t, 16.25, 16.9)}
+        loading={tween(t, 16.6, 17.5)}
+      />
       <div
         style={{
           position: "absolute",
-          left: 191,
-          top: 265,
-          width: 1538,
-          height: 62,
-          background: "#152239",
-          display: "flex",
-          alignItems: "end",
-          gap: 8,
-          padding: "0 29px",
-        }}
-      >
-        <div
-          style={{
-            height: 51,
-            width: 310,
-            borderRadius: "13px 13px 0 0",
-            background: "#23354e",
-            display: "flex",
-            alignItems: "center",
-            gap: 14,
-            padding: "0 19px",
-            fontSize: 22,
-            fontWeight: 650,
-          }}
-        >
-          <span
-            style={{
-              width: 24,
-              height: 24,
-              borderRadius: 6,
-              background: "#6cabf5",
-              color: "#142d4b",
-              textAlign: "center",
-              fontSize: 16,
-              paddingTop: 2,
-            }}
-          >
-            N
-          </span>
-          Notes<span style={{ marginLeft: "auto", opacity: 0.4 }}>×</span>
-        </div>
-        {tabOpen ? (
-          <div
-            data-new-tab
-            style={{
-              height: 51,
-              width: tween(t, 9, 9.45, 0, 340),
-              borderRadius: "13px 13px 0 0",
-              background: "#1c304a",
-              border: "1px solid #8dc9ff80",
-              borderBottom: "none",
-              overflow: "hidden",
-              position: "relative",
-              opacity: tween(t, 9, 9.12),
-              translate: `0 ${tween(t, 9, 9.4, 15, 0)}px`,
-            }}
-          >
-            <div
-              style={{
-                width: 338,
-                height: 50,
-                display: "flex",
-                alignItems: "center",
-                gap: 13,
-                padding: "0 19px",
-                fontSize: 22,
-                color: "#d5e9ff",
-                fontWeight: 650,
-              }}
-            >
-              <span
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 6,
-                  background: "#b3a8ec",
-                  color: "#282f5a",
-                  textAlign: "center",
-                  fontSize: 17,
-                }}
-              >
-                ↗
-              </span>
-              Interface kit
-              <span style={{ marginLeft: "auto", opacity: 0.4 }}>×</span>
-            </div>
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                bottom: 0,
-                height: 3,
-                width: `${tween(t, 9, 9.7, 0, 100)}%`,
-                background: C.cyan,
-              }}
-            />
-          </div>
-        ) : null}
-        <div
-          style={{
-            padding: "0 17px 13px",
-            fontSize: 30,
-            color: "#8ba2c1",
-            opacity: 0.65,
-          }}
-        >
-          +
-        </div>
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 191,
-          top: 327,
-          width: 1538,
-          height: 61,
-          background: "#23354e",
+          left: 240,
+          top: 478,
+          width: 50,
+          height: 50,
+          borderRadius: 12,
+          border: t >= 1.1 ? "2px solid #85d9bd" : "2px solid #6488b1",
+          background: t >= 1.1 ? "#285d51" : "#162b43",
           display: "flex",
           alignItems: "center",
-          padding: "0 30px",
-          gap: 24,
-          color: "#849ab7",
+          justifyContent: "center",
+          fontSize: 34,
+          color: "#b3f5dd",
         }}
       >
-        <span style={{ fontSize: 27 }}>←</span>
-        <span style={{ fontSize: 27, opacity: 0.35 }}>→</span>
-        <span style={{ fontSize: 25 }}>↻</span>
-        <div
-          style={{
-            height: 36,
-            flex: 1,
-            borderRadius: 10,
-            background: "#142238",
-            display: "flex",
-            alignItems: "center",
-            padding: "0 20px",
-            fontSize: 18,
-          }}
-        >
-          ◇ <span style={{ marginLeft: 14 }}>workspace.local/notes</span>
-        </div>
-        <span style={{ fontSize: 25 }}>⋯</span>
+        {t >= 1.1 ? "✓" : ""}
       </div>
       <div
         style={{
           position: "absolute",
           left: TEXT_LEFT,
-          top: TEXT_TOP,
+          top: 450,
           fontSize: 86,
           fontWeight: 650,
           letterSpacing: -4.2,
           lineHeight: "112px",
+          whiteSpace: "nowrap",
         }}
       >
-        <div
-          data-selection
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 8,
-            height: 102,
-            width: selectionWidth,
-            background: "#8ac2ff",
-            opacity: double ? 0 : 1,
-            borderRadius: 5,
-          }}
-        />
+        Ready to{" "}
         <span
-          ref={sentenceRef}
+          ref={wordRef}
           style={{
             position: "relative",
             display: "inline-block",
-            whiteSpace: "nowrap",
-            color: C.ink,
+            background: wordSelected ? "#8ac2ff" : "transparent",
+            color: wordSelected ? "#112845" : C.ink,
+            borderRadius: 4,
           }}
         >
-          Make it{" "}
-          <span
-            ref={wordRef}
-            style={{
-              position: "relative",
-              display: "inline-block",
-              background: double ? "#8ac2ff" : "transparent",
-              color: double ? "#112845" : undefined,
-              borderRadius: 4,
-            }}
-          >
-            move.
-          </span>
+          ship.
         </span>
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            whiteSpace: "nowrap",
-            color: "#112845",
-            clipPath: `inset(0 ${100 - progress * 100}% 0 0)`,
-            opacity: double ? 0 : 1,
-          }}
-        >
-          Make it move.
-        </div>
       </div>
       <div
         style={{
           position: "absolute",
           left: TEXT_LEFT,
-          top: 655,
-          width: 420,
-          height: 210,
-          borderRadius: 22,
-          border: "1px solid #679bd677",
-          background: "linear-gradient(135deg,#234879,#17304c)",
-          padding: 27,
-          boxShadow: "0 16px 35px #0003",
+          top: 588,
+          fontSize: 22,
+          color: "#7893b4",
         }}
       >
-        <div
-          style={{
-            width: 86,
-            height: 86,
-            border: "16px solid #a6d8ff",
-            borderRadius: 20,
-            rotate: "-14deg",
-            marginLeft: 12,
-            marginTop: 4,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            left: 27,
-            bottom: 25,
-            fontSize: 29,
-            fontWeight: 650,
-            color: "#b6d9ff",
-            textDecoration: t >= 8.6 ? "underline" : undefined,
-          }}
+        Release checklist{" "}
+        <span
+          style={{ marginLeft: 24, color: t >= 1.1 ? "#8fd7be" : "#617e9f" }}
         >
-          Interface kit ↗
-        </div>
+          {t >= 1.1 ? "3 of 3 ready" : "2 of 3 ready"}
+        </span>
       </div>
+      <AssetCard
+        title="Launch assets ↗"
+        color="#234879"
+        style={{
+          left: 310,
+          top: 655,
+          border: t > 13.8 ? "1px solid #a1d3ff" : "1px solid #679bd655",
+        }}
+      />
+      <AssetCard
+        title="Keyboard guide"
+        color="#243b50"
+        style={{ left: 780, top: 655, opacity: 0.6 }}
+      />
+      <AssetCard
+        title="Preview build"
+        color="#343454"
+        style={{ left: 1250, top: 655, opacity: 0.6 }}
+      />
       <div
-        style={{ position: "absolute", left: 1400, top: 465, rotate: "-9deg" }}
+        style={{
+          position: "absolute",
+          left: 310,
+          top: 915,
+          width: 1360,
+          borderTop: "1px solid #39516e66",
+          paddingTop: 22,
+          display: "flex",
+          justifyContent: "space-between",
+          fontSize: 19,
+          color: "#6f88a7",
+        }}
       >
-        <MouseVisual left={space} middle={middle} right={right} />
+        <span>Release v1.0</span>
+        <span>Guide ready · Assets reviewed · Preview built</span>
+        <span>Updated just now</span>
       </div>
-      {menu ? (
+      {menuWord || menuAsset ? (
         <div
           style={{
             position: "absolute",
-            left: metrics.wordX,
-            top: 535,
-            width: 420,
-            padding: 10,
+            left: menuWord ? wordX : 620,
+            top: menuWord ? 535 : 705,
+            width: 440,
+            padding: 11,
             borderRadius: 17,
-            background: "#f2f6ff",
-            color: "#273d5a",
-            boxShadow: "0 22px 65px #0006",
-            opacity: tween(t, 6.65, 6.8),
-            scale: tween(t, 6.65, 6.85, 0.94, 1),
-            transformOrigin: "top left",
+            background: "#1b2d44",
+            color: "#d5e6fa",
+            border: "1px solid #7093b359",
+            boxShadow: "0 22px 65px #0007",
+            opacity: menuWord
+              ? 1 - tween(t, 9.3, 9.5)
+              : 1 - tween(t, 13.6, 13.8),
             zIndex: 20,
           }}
         >
-          {["Copy", "Look Up", "Search the Web"].map((label, i) => (
+          {(menuWord
+            ? ["Copy", "Look Up", "Search the Web"]
+            : ["Open Link in New Tab", "Copy Link", "Save Link"]
+          ).map((label, i) => (
             <div
               key={label}
               style={{
-                padding: "16px 19px",
+                padding: "16px 18px",
                 height: 59,
                 borderRadius: 8,
-                fontSize: 24,
-                background: i === 0 && t >= 7.35 ? C.blue : undefined,
-                color: i === 0 && t >= 7.35 ? "white" : undefined,
+                fontSize: 23,
+                borderTop: i === 1 ? "1px solid #6684a325" : undefined,
               }}
             >
               {label}
-              <span style={{ float: "right", opacity: 0.4 }}>
-                {i === 0 ? "⌘C" : "↗"}
+              <span style={{ float: "right", opacity: 0.35 }}>
+                {i === 0 ? (menuWord ? "⌘C" : "↗") : "⋯"}
               </span>
             </div>
           ))}
         </div>
       ) : null}
-      {t >= 8.05 && t < 8.6 ? (
+      <div
+        style={{
+          position: "absolute",
+          left: mouseX,
+          top: mouseY,
+          scale: 0.65,
+          transformOrigin: "top left",
+          rotate: "-9deg",
+          zIndex: 25,
+        }}
+      >
+        <MouseVisual
+          left={space}
+          middle={middle || (t >= 15.8 && t < 16.65)}
+          right={right}
+        />
+      </div>
+      {t >= 15.4 && t < 16.9 ? (
         <div
           style={{
             position: "absolute",
-            left: metrics.wordX + 80,
-            top: 615,
-            fontSize: 25,
-            color: C.cyan,
-            opacity: 1 - tween(t, 8.35, 8.6),
+            left: 310 + 228 * flight + Math.sin(flight * Math.PI) * 80,
+            top: 655 - 379 * flight - Math.sin(flight * Math.PI) * 110,
+            width: 420 - 80 * flight,
+            height: 210 - 159 * flight,
+            borderRadius: 22 - 9 * flight,
+            background: "linear-gradient(135deg,#2c527c,#1b314b)",
+            border: "1px solid #9bd8ff",
+            boxShadow: "0 25px 45px #0006",
+            rotate: `${-8 * (1 - flight)}deg`,
+            opacity: 1 - tween(t, 16.55, 16.9),
+            zIndex: 60,
+            overflow: "hidden",
           }}
         >
-          Copied ✓
+          <div
+            style={{
+              position: "absolute",
+              left: 38,
+              top: 30,
+              width: 76,
+              height: 76,
+              border: "14px solid #a6d8ff",
+              borderRadius: 19,
+              opacity: 1 - flight,
+              rotate: "-14deg",
+            }}
+          />
+          <span
+            style={{
+              position: "absolute",
+              left: 27 + 28 * flight,
+              bottom: 25 - 10 * flight,
+              fontSize: 29 - 7 * flight,
+              fontWeight: 650,
+              color: "#d5e9ff",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Launch assets
+          </span>
         </div>
       ) : null}
       <Cursor
         x={x}
         y={y}
         size={53}
-        light={!menu}
-        pressed={pressed}
-        press={(space && !(t > 1.27 && t < 3.2)) || right || middle}
+        light
+        pressed={space ? ["Space"] : right ? ["R"] : middle ? ["E"] : []}
+        press={space || right || middle}
       />
       <div
         style={{
@@ -422,7 +339,7 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
             display: "flex",
             gap: 42,
             padding: "18px 30px 24px",
-            background: "#0b182beF",
+            background: "#0b182bef",
             backdropFilter: "blur(18px)",
             border: "1px solid #7198c543",
             boxShadow: "0 12px 50px #0005",
@@ -430,9 +347,9 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
           }}
         >
           {[
-            { label: "Left", key: "Space", active: space, button: 0 },
-            { label: "Middle", key: "E", active: middle, button: 1 },
-            { label: "Right", key: "R", active: right, button: 2 },
+            { label: "Left", key: "Space", active: space },
+            { label: "Middle", key: "E", active: middle },
+            { label: "Right", key: "R", active: right },
           ].map((button) => (
             <div
               key={button.label}
@@ -440,7 +357,7 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
                 display: "flex",
                 alignItems: "center",
                 gap: 17,
-                opacity: button.active ? 1 : 0.72,
+                opacity: button.active ? 1 : 0.65,
               }}
             >
               <div

@@ -1,16 +1,15 @@
-"""Original KeyMouse score + restrained V2 sound design. No sampled or third-party audio.
+"""Original KeyMouse score + V3 soundtrack: original music with noise percussion removed. No sampled or third-party audio.
 
 Rebuild with Python 3 and numpy: python scripts/score.py
-48 seconds, 120 BPM, D minor, 48 kHz stereo. Seeded for reproducibility.
+56 seconds, 120 BPM, D minor, 48 kHz stereo. Seeded for reproducibility.
 """
 from pathlib import Path
 import wave
 import numpy as np
 
 SR = 48000
-DURATION = 48
+DURATION = 56
 N = SR * DURATION
-rng = np.random.default_rng(7301)
 music = np.zeros((N, 2), dtype=np.float64)
 effects = np.zeros_like(music)
 
@@ -56,30 +55,15 @@ for bar in range((DURATION+3)//4):
             tone[:,channel] += (np.sin(2*np.pi*f*(1+detune)*t+.1*i)+.15*np.sin(2*np.pi*f*2*t))*envelope/4
     place(music,tone,at,gain=.115 if at<DURATION-4 else .16)
 
-# Warm sub, tight low drums and deliberately quiet brushed upper percussion.
+# Original low rhythm, with only noise-based percussion removed.
 for beat in np.arange(0,DURATION-2,.5):
     full=beat>=4
     t=time(.46)
     freq=49+102*np.exp(-t/.023)
     phase=2*np.pi*np.cumsum(freq)/SR
     kick=np.sin(phase)*np.exp(-t/.10)*(1-np.exp(-t/.0018))
-    kick+=.035*rng.standard_normal(len(t))*np.exp(-t/.008)
     if full or beat%2==0:
         place(music,kick,beat,.36 if full else .19)
-    if full and int(round(beat*2))%2:
-        t=time(.18)
-        noise=rng.standard_normal(len(t))
-        hi=noise-np.convolve(noise,np.ones(10)/10,mode='same')
-        env=(1-np.exp(-t/.002))*(np.exp(-t/.025)+.35*np.exp(-((t-.022)/.009)**2))
-        place(music,hi*env,beat,.022,pan=.12)
-    if full:
-        for step in [0,.25]:
-            t=time(.095 if step==0 else .15)
-            noise=rng.standard_normal(len(t))
-            hi=noise-np.convolve(noise,np.ones(4)/4,mode='same')
-            env=np.exp(-t/(.014 if step==0 else .031))*(1-np.exp(-t/.001))
-            place(music,hi*env,beat+step,.018 if step==0 else .026,pan=-.35 if step==0 else .35)
-
 roots=[38,34,41,36]
 for bar in range(2,DURATION//2-1):
     root=roots[(bar//2)%4]
@@ -103,49 +87,38 @@ for step in range(16,(DURATION-4)*4):
     place(music,signal,at+.375,gain*.24,-pan)
     place(music,signal,at+.75,gain*.10,pan)
 
-# V2: no air sweeps, reverse noise, risers, or sound on continuous motion.
-# Soft low-register tine accents replace the transition swipes.
-def tine(at, note=62, level=.11):
+# Discrete, quiet tonal accents. The musical melody and bass above are unchanged.
+def tine(at,note=62,level=.08):
     t=time(.7)
     f=hz(note)
     signal=(np.sin(2*np.pi*f*t)+.14*np.sin(2*np.pi*f*3*t)*np.exp(-t/.08))
     signal*=(1-np.exp(-t/.012))*np.exp(-t/.16)
-    place(effects,signal,at,level,-.12)
-    place(effects,signal,at+.14,level*.13,.2)
-
-for at in [4,14,20,34,40,44]:
-    tine(at,62,.10)
-
+    place(effects,signal,at,level,-.1)
+    place(effects,signal,at+.14,level*.1,.2)
 def confirm(at):
-    tine(at,74,.105)
-    tine(at+.085,77,.075)
-
-tine(.18,62,.08)
-# Discrete presses only; the continuous cursor and canvas are intentionally quiet.
-for at,note in [(5.2,74),(5.7,72),(6.2,76),(6.7,77),
-                (7.35,74),(7.9,77),(8.45,81)]:
-    tine(at,note,.045)
-tine(21.54,69,.07)
-confirm(23.85)
-tine(25.95,74,.06)
-tine(26.3,77,.06)
-tine(29.31,69,.08)
-confirm(31.27)
-confirm(32.6)
-tine(34.85,62,.08)
-confirm(37.9)
-tine(41.8,77,.065)
-confirm(44.5)
-
-# Lightweight sidechain gives the score its pulse without masking the UI accents.
+    tine(at,69,.065)
+    tine(at+.11,74,.045)
+for at in [4,14,36,42,46,52]:tine(at,62,.06)
+tine(.18,62,.045)
+for at,note in [(5.2,65),(5.7,62),(6.2,67),(6.7,69),(7.7,65),(8.65,69),(9.6,74)]:tine(at,note,.035)
+# Space cases, then two R cases, then E and its arriving tab.
+confirm(15.1)
+tine(17.4,69,.04)
+tine(17.8,72,.04)
+tine(21.1,65,.05)
+tine(25.2,65,.05)
+tine(29.4,69,.05)
+confirm(30.65)
+# Pointer-only precision case, separate from the drag use case.
+tine(42.4,67,.03)
+tine(43.9,62,.03)
+tine(46.85,62,.04)
+confirm(49.9)
+confirm(52.5)
 ts=np.arange(N)/SR
-duck=.72+.28*(1-np.exp(-np.mod(ts,.5)/.07))
-music*=duck[:,None]
-fadein=np.minimum(ts/.25,1)
-fadeout=np.clip((DURATION-ts)/1.6,0,1)
-music*=fadein[:,None]*fadeout[:,None]
-effects*=np.minimum((DURATION-ts)/.18,1)[:,None]
-
+music*=(.72+.28*(1-np.exp(-np.mod(ts,.5)/.07)))[:,None]
+music*=np.minimum(ts/.25,1)[:,None]*np.clip((DURATION-ts)/1.6,0,1)[:,None]
+effects*=np.clip((DURATION-ts)/.18,0,1)[:,None]
 def write(name,track,peak):
     track=np.tanh(track*1.1)
     track*=peak/max(np.max(np.abs(track)),.001)
@@ -153,8 +126,6 @@ def write(name,track,peak):
     out=Path(__file__).resolve().parents[1]/'public'/'audio'/name
     with wave.open(str(out),'wb') as wav:
         wav.setnchannels(2);wav.setsampwidth(2);wav.setframerate(SR);wav.writeframes(pcm.tobytes())
-    rms=np.sqrt(np.mean(track**2))
-    print(f'{name}: {DURATION}s stereo / peak {20*np.log10(np.max(np.abs(track))):.1f} dBFS / RMS {20*np.log10(rms):.1f} dBFS')
-
-write('in-full-control.wav',music,.70)
-write('sound-design.wav',effects,.43)
+    print(f'{name}: {DURATION}s stereo, peak {20*np.log10(np.max(np.abs(track))):.1f} dBFS, RMS {20*np.log10(np.sqrt(np.mean(track**2))):.1f} dBFS')
+write('in-full-control-clean-v3.wav',music,.70)
+write('grouped-click-accents-v3.wav',effects,.32)

@@ -1,17 +1,18 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Cursor, Key, lerp, tween } from "../design";
-import { AppWindow, Stage, InputDock, Plus, Surface } from "../stage";
+import { BrowserFrame } from "../BrowserFrame";
+import { Stage, InputDock, Surface } from "../stage";
 
 export const Scroll: React.FC = () => {
   const t = useCurrentFrame() / useVideoConfig().fps;
   const sy = lerp(t, [0, 0.8, 2.5, 2.9, 3.9], [0, 0, -430, -430, -220]);
   const sx = lerp(t, [0, 4.2, 5.2], [0, 0, -450]);
   return (
-    <Stage title="Scroll." light>
-      <AppWindow title="Gallery" light />
+    <Stage demo>
+      <BrowserFrame active="assets" assetsProgress={1} />
       <Surface
-        style={{ left: 218, top: 285, width: 1484, height: 880 }}
+        style={{ left: 218, top: 410, width: 1484, height: 880 }}
         tilt={0}
       >
         <div
@@ -21,7 +22,7 @@ export const Scroll: React.FC = () => {
             borderRadius: 12,
             overflow: "hidden",
             boxShadow: "none",
-            background: "#fff",
+            background: "#0c1627",
           }}
         >
           <div
@@ -35,7 +36,7 @@ export const Scroll: React.FC = () => {
             }}
           >
             {Array.from({ length: 12 }, (_, i) => {
-              const palette = ["#a7c7f6", "#97cecb", "#dfb5a6", "#b9b2e6"];
+              const palette = ["#213f64", "#214b50", "#514132", "#433953"];
               return (
                 <div
                   key={i}
@@ -53,7 +54,7 @@ export const Scroll: React.FC = () => {
                       position: "absolute",
                       width: 235,
                       height: 235,
-                      border: "42px solid #ffffff99",
+                      border: "42px solid #9acaff66",
                       borderRadius: i % 3 === 0 ? "50%" : 45,
                       rotate: `${i * 23 - 22}deg`,
                       left: 90,
@@ -65,7 +66,7 @@ export const Scroll: React.FC = () => {
                       position: "absolute",
                       width: 150,
                       height: 150,
-                      background: "#ffffff55",
+                      background: "#b9d9ff12",
                       borderRadius: "50%",
                       left: -20,
                       top: 230,
@@ -79,7 +80,7 @@ export const Scroll: React.FC = () => {
             style={{
               position: "absolute",
               inset: 0,
-              boxShadow: "inset 0 0 0 2px #ffffff77",
+              boxShadow: "inset 0 0 0 2px #8ab2e522",
               borderRadius: 12,
               pointerEvents: "none",
             }}
@@ -92,7 +93,7 @@ export const Scroll: React.FC = () => {
               width: 5,
               height: 125,
               borderRadius: 5,
-              background: "#3d58795c",
+              background: "#9bbbd288",
             }}
           />
           <div
@@ -103,13 +104,14 @@ export const Scroll: React.FC = () => {
               width: 400,
               height: 5,
               borderRadius: 5,
-              background: "#3d58795c",
+              background: "#9bbbd288",
             }}
           />
         </div>
         <Cursor
           x={1040}
           y={280}
+          light
           size={55}
           pressed={
             t > 0.8 && t < 2.5
@@ -134,20 +136,13 @@ export const Scroll: React.FC = () => {
       >
         {t > 4.2 ? "↔" : "↕"}
       </div>
-      <InputDock light>
-        <Key light wide active={t > 0.8 && t < 5.3}>
+      <InputDock>
+        <Key wide active={t > 0.8 && t < 5.3}>
           ⇧ Shift
         </Key>
-        <Plus />
-        <Key light active={t > 0.8 && t < 2.5}>
-          ↓
-        </Key>
-        <Key light active={t > 2.9 && t < 3.9}>
-          ↑
-        </Key>
-        <Key light active={t > 4.2 && t < 5.3}>
-          →
-        </Key>
+        <Key active={t > 0.8 && t < 2.5}>↓</Key>
+        <Key active={t > 2.9 && t < 3.9}>↑</Key>
+        <Key active={t > 4.2 && t < 5.3}>→</Key>
       </InputDock>
     </Stage>
   );

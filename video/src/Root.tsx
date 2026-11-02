@@ -5,8 +5,8 @@ import { Move } from "./scenes/Move";
 import { Scroll } from "./scenes/Scroll";
 import { Select } from "./scenes/Select";
 import { Context } from "./scenes/Context";
+import { Precision } from "./scenes/Precision";
 import { Drag } from "./scenes/Drag";
-import { Tune } from "./scenes/Tune";
 import { Clicks } from "./scenes/Clicks";
 import { Closing } from "./scenes/Closing";
 import { Film as SavedV1 } from "./versions/v1/Film";
@@ -21,16 +21,24 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         fps={60}
-        durationInFrames={2880}
+        durationInFrames={3360}
       />
       <Folder name="Scenes">
+        <Composition
+          id="Precision"
+          component={Precision}
+          width={1920}
+          height={1080}
+          fps={60}
+          durationInFrames={240}
+        />
         <Composition
           id="Clicks"
           component={Clicks}
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={840}
+          durationInFrames={1320}
         />
         <Composition
           id="Opening"
@@ -62,7 +70,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={504}
+          durationInFrames={360}
         />
         <Composition
           id="Context-and-middle-click"
@@ -70,7 +78,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={336}
+          durationInFrames={960}
         />
         <Composition
           id="Drag-and-drop"
@@ -79,14 +87,6 @@ export const RemotionRoot: React.FC = () => {
           height={1080}
           fps={60}
           durationInFrames={360}
-        />
-        <Composition
-          id="Tune"
-          component={Tune}
-          width={1920}
-          height={1080}
-          fps={60}
-          durationInFrames={240}
         />
         <Composition
           id="Closing"

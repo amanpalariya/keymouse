@@ -1,18 +1,23 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { C, Cursor, lerp, mono, tween } from "../design";
+import { Cursor, lerp, tween } from "../design";
 import { Stage } from "../stage";
-import { Keyboard, MouseButton } from "../Keyboard";
+import { Keyboard } from "../Keyboard";
+import { MouseVisual } from "../MouseVisual";
 
 export const Move: React.FC = () => {
   const t = useCurrentFrame() / useVideoConfig().fps;
   // Stable overview: pointer movement and three clicks, then time to read.
   const cursorX = lerp(
     t,
-    [0, 1.2, 1.55, 2.7, 3.05],
-    [1370, 1370, 1250, 1250, 1370],
+    [0, 1.2, 1.55, 2.7, 3.05, 3.6],
+    [1370, 1370, 1250, 1250, 1370, 560],
   );
-  const cursorY = lerp(t, [0, 1.7, 2.05, 2.2, 2.55], [480, 480, 570, 570, 480]);
+  const cursorY = lerp(
+    t,
+    [0, 1.7, 2.05, 2.2, 2.55, 3.6],
+    [480, 480, 570, 570, 480, 514],
+  );
   const pressed =
     t > 1.2 && t < 1.55
       ? ["←"]
@@ -22,11 +27,11 @@ export const Move: React.FC = () => {
           ? ["↑"]
           : t > 2.7 && t < 3.05
             ? ["→"]
-            : t > 3.35 && t < 3.7
-              ? ["Space"]
-              : t > 3.9 && t < 4.25
+            : t > 3.7 && t < 4.45
+              ? ["W"]
+              : t > 4.65 && t < 5.4
                 ? ["E"]
-                : t > 4.45 && t < 4.8
+                : t > 5.6 && t < 6.35
                   ? ["R"]
                   : [];
   const equivalents: Record<string, string[]> = {
@@ -35,31 +40,25 @@ export const Move: React.FC = () => {
     "↑": ["↑", "K"],
     "→": ["→", "L"],
     Space: ["Space", "W"],
+    W: ["W", "Space"],
   };
   const active = pressed.flatMap((key) => equivalents[key] ?? [key]);
   return (
-    <Stage title="Mapped.">
+    <Stage demo>
       <div
         style={{
           position: "absolute",
-          left: 450,
-          top: 209,
-          display: "flex",
-          gap: 14,
-          opacity: tween(t, 0.15, 0.65),
+          left: 560,
+          top: 145,
+          scale: 0.55,
+          transformOrigin: "top left",
         }}
       >
-        {["LEFT", "MIDDLE", "RIGHT"].map((label, i) => (
-          <div
-            key={label}
-            style={{ width: 96, textAlign: "center", color: C.muted }}
-          >
-            <MouseButton button={i} size={41} />
-            <div style={{ fontFamily: mono, fontSize: 17, marginTop: 10 }}>
-              {label}
-            </div>
-          </div>
-        ))}
+        <MouseVisual
+          left={pressed.includes("W")}
+          middle={pressed.includes("E")}
+          right={pressed.includes("R")}
+        />
       </div>
       <div
         style={{
@@ -119,9 +118,9 @@ export const Move: React.FC = () => {
           light
           pressed={pressed}
           press={
-            (t > 3.35 && t < 3.5) ||
-            (t > 3.9 && t < 4.05) ||
-            (t > 4.45 && t < 4.6)
+            (t > 3.7 && t < 3.88) ||
+            (t > 4.65 && t < 4.83) ||
+            (t > 5.6 && t < 5.78)
           }
         />
       </div>

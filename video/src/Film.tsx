@@ -6,8 +6,8 @@ import { Opening } from "./scenes/Opening";
 import { Move } from "./scenes/Move";
 import { Scroll } from "./scenes/Scroll";
 import { Clicks } from "./scenes/Clicks";
+import { Precision } from "./scenes/Precision";
 import { Drag } from "./scenes/Drag";
-import { Tune } from "./scenes/Tune";
 import { Closing } from "./scenes/Closing";
 
 export const Film: React.FC = () => {
@@ -30,35 +30,35 @@ export const Film: React.FC = () => {
           <Move />
         </TransitionSeries.Sequence>
         <TransitionSeries.Sequence
-          name="03 — Scroll in both directions"
+          name="03 — Edit a release note and open its assets"
+          durationInFrames={22 * fps}
+          premountFor={fps}
+        >
+          <Clicks />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Sequence
+          name="04 — Browse the linked launch assets"
           durationInFrames={6 * fps}
           premountFor={fps}
         >
           <Scroll />
         </TransitionSeries.Sequence>
         <TransitionSeries.Sequence
-          name="04 — All clicks / selection to context menu to browser tab"
-          durationInFrames={14 * fps}
+          name="05 — Find the small preview control"
+          durationInFrames={4 * fps}
           premountFor={fps}
         >
-          <Clicks />
+          <Precision />
         </TransitionSeries.Sequence>
         <TransitionSeries.Sequence
-          name="06 — Drag and drop"
+          name="06 — Move a task to Done"
           durationInFrames={6 * fps}
           premountFor={fps}
         >
           <Drag />
         </TransitionSeries.Sequence>
         <TransitionSeries.Sequence
-          name="07 — Speed and precision"
-          durationInFrames={4 * fps}
-          premountFor={fps}
-        >
-          <Tune />
-        </TransitionSeries.Sequence>
-        <TransitionSeries.Sequence
-          name="08 — Every move, yours / 3D fly-out"
+          name="07 — Every move, yours / 3D fly-out"
           durationInFrames={4 * fps}
           premountFor={fps}
         >
@@ -66,16 +66,16 @@ export const Film: React.FC = () => {
         </TransitionSeries.Sequence>
       </TransitionSeries>
       <Audio
-        name="Original score — In Full Control / 120 BPM"
-        src={staticFile("audio/in-full-control.wav")}
+        name="In Full Control — original music, rustle removed"
+        src={staticFile("audio/in-full-control-clean-v3.wav")}
         premountFor={fps}
         volume={0.8}
       />
       <Audio
         name="Designed sound — soft tine accents / no swipes"
-        src={staticFile("audio/sound-design.wav")}
+        src={staticFile("audio/grouped-click-accents-v3.wav")}
         premountFor={fps}
-        volume={0.45}
+        volume={0.35}
       />
     </AbsoluteFill>
   );

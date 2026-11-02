@@ -1,12 +1,11 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { Backdrop, BrandMark, C, font, Key, mono, tween } from "./design";
+import { Backdrop, BrandMark, C, font, tween } from "./design";
 
 export const AppWindow: React.FC<{
   title: string;
-  light?: boolean;
   style?: React.CSSProperties;
-}> = ({ title, light, style }) => {
+}> = ({ title, style }) => {
   const t = useCurrentFrame() / useVideoConfig().fps;
   return (
     <div
@@ -17,9 +16,9 @@ export const AppWindow: React.FC<{
         width: 1540,
         height: 1000,
         borderRadius: 25,
-        background: light ? "#f8fbff" : "#101b2b",
-        boxShadow: light ? "0 40px 90px #1c426b2c" : "0 40px 90px #0005",
-        border: `1px solid ${light ? "#c8d6e7" : "#5a759b55"}`,
+        background: "#101b2b",
+        boxShadow: "0 40px 90px #0005",
+        border: "1px solid #5a759b55",
         opacity: tween(t, 0, 0.25),
         translate: `0 ${tween(t, 0, 0.5, 35, 0)}px`,
         overflow: "hidden",
@@ -33,8 +32,8 @@ export const AppWindow: React.FC<{
           alignItems: "center",
           gap: 11,
           padding: "0 25px",
-          background: light ? "#eaf0f8" : "#1a283d",
-          borderBottom: `1px solid ${light ? "#cbd6e580" : "#7193c322"}`,
+          background: "#1a283d",
+          borderBottom: "1px solid #7193c322",
         }}
       >
         {["#fd746e", "#f7c857", "#65ca8a"].map((c) => (
@@ -54,7 +53,7 @@ export const AppWindow: React.FC<{
             left: 150,
             right: 150,
             textAlign: "center",
-            color: light ? "#6c7f98" : "#a4b5cb",
+            color: "#a4b5cb",
             fontSize: 19,
             fontWeight: 600,
           }}
@@ -66,60 +65,48 @@ export const AppWindow: React.FC<{
   );
 };
 
-// Film framing: one action, one stage. No persistent navigation or body copy.
-export const Stage: React.FC<{
-  children: React.ReactNode;
-  title?: string;
-  light?: boolean;
-}> = ({ children, title, light }) => {
-  const t = useCurrentFrame() / useVideoConfig().fps;
-  return (
-    <Backdrop light={light}>
-      {title ? (
-        <div
-          style={{
-            position: "absolute",
-            left: 96,
-            top: 66,
-            fontSize: 92,
-            fontWeight: 750,
-            lineHeight: 1,
-            letterSpacing: -5,
-            opacity: tween(t, 0, 0.2),
-            translate: `0 ${tween(t, 0, 0.5, 30, 0)}px`,
-            zIndex: 10,
-          }}
-        >
-          {title}
-        </div>
-      ) : null}
-      <div
-        style={{
-          position: "absolute",
-          right: 94,
-          top: 78,
-          display: "flex",
-          alignItems: "center",
-          gap: 13,
-          fontSize: 23,
-          fontWeight: 750,
-          letterSpacing: -1,
-          opacity: 0.7,
-        }}
-      >
-        <BrandMark size={29} color={light ? C.blue : C.cyan} />
-        KeyMouse
-      </div>
+// Feature shots use the former title area for larger application content.
+export const Stage: React.FC<{ children: React.ReactNode; demo?: boolean }> = ({
+  children,
+  demo,
+}) => (
+  <Backdrop>
+    <div
+      style={{
+        position: "absolute",
+        right: 94,
+        top: 32,
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        fontSize: 21,
+        fontWeight: 750,
+        letterSpacing: -0.8,
+        opacity: 0.65,
+        zIndex: 70,
+      }}
+    >
+      <BrandMark size={26} color={C.cyan} />
+      KeyMouse
+    </div>
+    <div
+      data-demo-canvas={demo}
+      style={{
+        position: "absolute",
+        inset: 0,
+        transform: demo ? "translateY(-100px) scale(1.08)" : undefined,
+        transformOrigin: "center top",
+      }}
+    >
       {children}
-    </Backdrop>
-  );
-};
+    </div>
+  </Backdrop>
+);
 
 export const InputDock: React.FC<{
   children: React.ReactNode;
   caption?: string;
-  light?: boolean;
-}> = ({ children, caption, light }) => (
+}> = ({ children, caption }) => (
   <div
     style={{
       position: "absolute",
@@ -140,8 +127,8 @@ export const InputDock: React.FC<{
         gap: 15,
         padding: "17px 22px 21px",
         borderRadius: 25,
-        background: light ? "#eef5fff0" : "#101e30ed",
-        border: light ? "1px solid #c3d2e780" : "1px solid #819ec52e",
+        background: "#101e30ed",
+        border: "1px solid #819ec52e",
         boxShadow: "0 12px 45px #0003",
         backdropFilter: "blur(16px)",
       }}
@@ -154,51 +141,12 @@ export const InputDock: React.FC<{
           fontSize: 22,
           fontFamily: font,
           fontWeight: 600,
-          color: light ? "#607087" : C.muted,
+          color: C.muted,
         }}
       >
         {caption}
       </div>
     ) : null}
-  </div>
-);
-
-export const Plus: React.FC = () => (
-  <span style={{ fontSize: 27, opacity: 0.45, margin: "0 8px" }}>+</span>
-);
-
-export const Shortcut: React.FC<{
-  keys: string[];
-  active?: boolean;
-  light?: boolean;
-}> = ({ keys, active, light }) => (
-  <>
-    {keys.map((key, i) => (
-      <React.Fragment key={key}>
-        {i ? <Plus /> : null}
-        <Key active={active} wide={key.length > 2} light={light}>
-          {key}
-        </Key>
-      </React.Fragment>
-    ))}
-  </>
-);
-
-export const ActionTag: React.FC<{
-  children: React.ReactNode;
-  color?: string;
-  style?: React.CSSProperties;
-}> = ({ children, color = C.cyan, style }) => (
-  <div
-    style={{
-      fontFamily: mono,
-      fontSize: 19,
-      letterSpacing: 2,
-      color,
-      ...style,
-    }}
-  >
-    {children}
   </div>
 );
 
