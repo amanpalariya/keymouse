@@ -9,16 +9,18 @@ import {
 } from "remotion";
 import { loadFont } from "@remotion/fonts";
 
-void loadFont({
-  family: "Manrope",
-  url: staticFile("fonts/Manrope.ttf"),
-  weight: "200 800",
-});
-void loadFont({
-  family: "Plex",
-  url: staticFile("fonts/IBMPlexMono.ttf"),
-  weight: "400",
-});
+export const fontsReady = Promise.all([
+  loadFont({
+    family: "Manrope",
+    url: staticFile("fonts/Manrope.ttf"),
+    weight: "200 800",
+  }),
+  loadFont({
+    family: "Plex",
+    url: staticFile("fonts/IBMPlexMono.ttf"),
+    weight: "400",
+  }),
+]);
 
 export const C = {
   bg: "#080c16",
@@ -400,14 +402,16 @@ export const Cursor: React.FC<{
   press?: boolean;
   light?: boolean;
   label?: string;
-}> = ({ x, y, size = 43, press, light, label }) => (
+  pressed?: string[];
+}> = ({ x, y, size = 43, press, light, label, pressed = [] }) => (
   <div
     style={{
       position: "absolute",
-      left: x,
-      top: y,
+      left: x - (size * 2) / 35,
+      top: y - (size * 2) / 35,
       zIndex: 40,
       scale: press ? 0.88 : 1,
+      transformOrigin: `${(size * 2) / 35}px ${(size * 2) / 35}px`,
       filter: "drop-shadow(0 5px 5px #12254455)",
     }}
   >
@@ -425,7 +429,7 @@ export const Cursor: React.FC<{
         }}
       />
     ) : null}
-    <svg width={size} height={size * 1.3} viewBox="0 0 35 46">
+    <svg width={size} height={(size * 46) / 35} viewBox="0 0 35 46">
       <path
         d="M2 2L30 26L18 28L25 41L18 45L11 31L2 39Z"
         fill={light ? "#f7fbff" : "#17273f"}
@@ -434,6 +438,39 @@ export const Cursor: React.FC<{
         strokeLinejoin="round"
       />
     </svg>
+    {pressed.length ? (
+      <div
+        style={{
+          position: "absolute",
+          left: size * 0.6,
+          top: size * 0.95,
+          display: "flex",
+          gap: 6,
+          padding: 7,
+          borderRadius: 12,
+          background: "#0c172de8",
+          border: "1px solid #8bc6ff44",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {pressed.map((key) => (
+          <div
+            key={key}
+            style={{
+              padding: "7px 12px",
+              borderRadius: 6,
+              background: "#a2e5ff",
+              color: "#15314d",
+              fontSize: 22,
+              fontWeight: 700,
+              fontFamily: font,
+            }}
+          >
+            {key}
+          </div>
+        ))}
+      </div>
+    ) : null}
     {label ? (
       <div
         style={{

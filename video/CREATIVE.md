@@ -1,44 +1,71 @@
-# KeyMouse — In Full Control
+# KeyMouse — In Full Control / V2
 
-40 seconds · 1920 × 1080 · 60 fps · 120 BPM
+48 seconds · 1920 × 1080 · 60 fps · 120 BPM
 
-A product film about keeping your hands on the keyboard and staying in flow.
-Beveled 3D cursor, icy blue light, large Manrope typography, floating keycaps,
-bright demo surfaces, and music-synced cuts with smooth movement inside each shot.
-Demonstration interfaces are animated illustrations of real KeyMouse controls;
-the Motion settings shot uses the app's actual screenshot.
+A product film with short action titles, a steady keyboard overview, tall app
+windows that extend below the frame, and floating input displays. The opening
+keeps HJKL beneath the sculpted 3D cursor. Demonstrations use arrows and Space.
 
-| Time  | Shot                                  | Actual controls demonstrated                    |
-| ----- | ------------------------------------- | ----------------------------------------------- |
-| 00–04 | Stay on the keys. 3D cursor fly-in.   | H J K L identity                                |
-| 04–10 | Activate, move, click.                | Tap Option; H J K L; Space left click           |
-| 10–16 | Scroll vertically and horizontally.   | Hold Shift + J / K / L                          |
-| 16–22 | Select text, double-click a word.     | Hold Space + L; tap W twice                     |
-| 22–26 | Context menu, open a new browser tab. | R right click; Space choose; E middle click     |
-| 26–32 | Drag a task from Ideas to Done.       | Hold Space + L; F to move faster; release Space |
-| 32–36 | Fast, precise, configurable.          | F 3×; D ¼×; actual Motion settings              |
-| 36–40 | Every move. Yours. Cursor fly-out.    | Option to start; Esc to stop                    |
+| Time  | Shot                                      | Inputs and behavior                                                                                       |
+| ----- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 00–04 | Stay on the keys. 3D fly-in.              | HJKL keycaps                                                                                              |
+| 04–14 | Steady keyboard map.                      | Pointer movement and three clicks only, followed by a calm hold                                           |
+| 14–20 | Gallery window.                           | Shift + ↓ / ↑ / →; vertical and horizontal scrolling                                                      |
+| 20–34 | Slower, continuous browser demonstration. | Short selection, double-click, context menu, and a browser tab; a large mouse visual shows button presses |
+| 34–40 | Launch board.                             | Hold Space + →, release to drop                                                                           |
+| 40–44 | Motion window.                            | F + → for speed; D + → for precision                                                                      |
+| 44–48 | Every move. Yours. 3D fly-out.            | Option: Start; Escape: Stop                                                                               |
+
+## Visual controls
+
+The physical keyboard stays in one layout with every mapping visible. Only
+pointer movement and the three click keys animate. The board then lingers
+without extra key presses so the viewer can absorb it. W/E/R
+are arranged as left/middle/right click controls, and HJKL carry direction
+arrows. Space is the primary left-click input in demonstrations. Equivalent keys
+highlight together: H/←, J/↓, K/↑, L/→, and W/Space. Cursor hints show the
+primary arrow or Space input. Arrow keys
+are four separate keys in an inverted T. Escape is in the function row.
+Option is labeled **START**, Escape **STOP**, D **SLOW**, and F **FAST**.
+Scrolling and speed have dedicated app-window demos rather than changing
+the overview into a sequence of explanations.
+
+The 14-second click sequence uses just “Make it move” as selectable text and
+a prominent mouse illustration with synchronized left, middle, and right
+button highlights. It keeps Left / Space, Middle / E, and Right / R
+visible together in one floating bar. Selection, double-click, context menu,
+and the new browser tab all happen in the same window. The selection width
+and cursor hotspot share one eased coordinate after locally loaded text is
+measured, so the highlight edge cannot outrun the pointer. Middle-click
+animates a new background tab into the browser's actual tab strip.
 
 ## Audio
 
-Original instrumental score and sound design, synthesized for this film using
-`scripts/score.py`. Warm sub, tight electronic percussion, wide suspended pads,
-and a sparse glass mallet motif in D minor. UI actions have tuned glass accents
-and rising confirmations. Editorial cuts use stereo air and low impacts.
-No stock music and no mouse-click recordings.
+The original 120 BPM musical theme is retained and extended to 48 seconds.
+There are no air sweeps, reverse noise, risers, or continuous movement sounds.
+Discrete presses and edits use quieter, short electric-piano tine accents.
+Both stems are original synthesized audio with no third-party samples.
 
-Assets are 48 kHz stereo WAVs, with score and sound design on separate editable
-timeline tracks. The final mix leaves headroom and fades out at the end.
+The 48 kHz stereo tracks are in `public/audio`. Rebuild them with
+`python scripts/score.py` (numpy required).
 
-## Editing and playback
+## Saved V1
 
-`npm run dev -- --no-open` starts Remotion Studio. Select `KeyMouse` for the full
-film. Every scene is also registered inside `Scenes` for focused editing.
+The original 40-second film was committed before revision as `5d546ee`, tagged
+`codex/keymouse-video-v1`. Independent scene sources and both original audio
+stems are also retained in `src/versions/v1` and `public/audio/v1`.
 
-`npm run lint` checks source and TypeScript. Fonts are locally bundled with their
-OFL licenses, and the film does not rely on remote assets during playback.
+Open **Saved → KeyMouse-v1** to compare without restoring files. The default
+**KeyMouse** composition is the current edit. V1 source and audio were checked
+against the tagged version.
 
-To rebuild audio: install numpy in your Python environment, then run
-`python scripts/score.py`.
+## Editing
 
-To export when desired: `npx remotion render KeyMouse out/keymouse.mp4`.
+`npm run dev -- --no-open` starts Studio. Current scenes are individually
+registered in **Scenes**; **Clicks** is the complete continuous click sequence.
+The Select and Context registrations open focused portions of that sequence.
+Fonts and audio are local. Demo windows illustrate actual KeyMouse behavior;
+they are not screen recordings.
+
+`npm run lint` checks ESLint and TypeScript. `npm run build` bundles the film.
+Export on demand: `npx remotion render KeyMouse out/keymouse.mp4`.

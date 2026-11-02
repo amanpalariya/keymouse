@@ -7,7 +7,9 @@ import { Select } from "./scenes/Select";
 import { Context } from "./scenes/Context";
 import { Drag } from "./scenes/Drag";
 import { Tune } from "./scenes/Tune";
+import { Clicks } from "./scenes/Clicks";
 import { Closing } from "./scenes/Closing";
+import { Film as SavedV1 } from "./versions/v1/Film";
 import "./style.css";
 
 export const RemotionRoot: React.FC = () => {
@@ -19,9 +21,17 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         fps={60}
-        durationInFrames={2400}
+        durationInFrames={2880}
       />
       <Folder name="Scenes">
+        <Composition
+          id="Clicks"
+          component={Clicks}
+          width={1920}
+          height={1080}
+          fps={60}
+          durationInFrames={840}
+        />
         <Composition
           id="Opening"
           component={Opening}
@@ -31,12 +41,12 @@ export const RemotionRoot: React.FC = () => {
           durationInFrames={240}
         />
         <Composition
-          id="Move-and-click"
+          id="Keyboard-map"
           component={Move}
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={360}
+          durationInFrames={600}
         />
         <Composition
           id="Scroll"
@@ -52,7 +62,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={360}
+          durationInFrames={504}
         />
         <Composition
           id="Context-and-middle-click"
@@ -60,7 +70,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={240}
+          durationInFrames={336}
         />
         <Composition
           id="Drag-and-drop"
@@ -85,6 +95,16 @@ export const RemotionRoot: React.FC = () => {
           height={1080}
           fps={60}
           durationInFrames={240}
+        />
+      </Folder>
+      <Folder name="Saved">
+        <Composition
+          id="KeyMouse-v1"
+          component={SavedV1}
+          width={1920}
+          height={1080}
+          fps={60}
+          durationInFrames={2400}
         />
       </Folder>
     </>

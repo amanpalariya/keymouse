@@ -1,14 +1,14 @@
-"""Original KeyMouse score + sound design. No sampled or third-party audio.
+"""Original KeyMouse score + restrained V2 sound design. No sampled or third-party audio.
 
 Rebuild with Python 3 and numpy: python scripts/score.py
-40 seconds, 120 BPM, D minor, 48 kHz stereo. Seeded for reproducibility.
+48 seconds, 120 BPM, D minor, 48 kHz stereo. Seeded for reproducibility.
 """
 from pathlib import Path
 import wave
 import numpy as np
 
 SR = 48000
-DURATION = 40
+DURATION = 48
 N = SR * DURATION
 rng = np.random.default_rng(7301)
 music = np.zeros((N, 2), dtype=np.float64)
@@ -43,17 +43,9 @@ def pluck(note, duration=.8, soft=False):
     body += .13*np.sin(2*np.pi*f*3*t)*np.exp(-t/.09)
     return body*env
 
-def air(duration=.5, rising=False):
-    t = time(duration)
-    noise = rng.standard_normal(len(t))
-    smooth = np.convolve(noise,np.ones(18)/18,mode='same')
-    band = np.convolve(noise,np.ones(3)/3,mode='same')-smooth
-    env = np.sin(np.pi*t/duration)**2
-    return band*env*(.25+.75*t/duration if rising else 1)
-
 # Suspended, wide pads. Chord changes every four seconds.
 chords = [[50,57,60,64,69],[46,53,57,60,65],[53,60,64,67,72],[48,55,60,62,67]]
-for bar in range(10):
+for bar in range((DURATION+3)//4):
     at = bar*4
     t = time(5.8)
     envelope=(1-np.exp(-t/.5))*np.exp(-np.maximum(t-3.65,0)/.7)
@@ -62,10 +54,10 @@ for bar in range(10):
         f=hz(note+12)
         for channel,detune in enumerate([-.0015,.0015]):
             tone[:,channel] += (np.sin(2*np.pi*f*(1+detune)*t+.1*i)+.15*np.sin(2*np.pi*f*2*t))*envelope/4
-    place(music,tone,at,gain=.115 if at<36 else .16)
+    place(music,tone,at,gain=.115 if at<DURATION-4 else .16)
 
 # Warm sub, tight low drums and deliberately quiet brushed upper percussion.
-for beat in np.arange(0,38,.5):
+for beat in np.arange(0,DURATION-2,.5):
     full=beat>=4
     t=time(.46)
     freq=49+102*np.exp(-t/.023)
@@ -89,7 +81,7 @@ for beat in np.arange(0,38,.5):
             place(music,hi*env,beat+step,.018 if step==0 else .026,pan=-.35 if step==0 else .35)
 
 roots=[38,34,41,36]
-for bar in range(2,19):
+for bar in range(2,DURATION//2-1):
     root=roots[(bar//2)%4]
     for offset,length,level,note in [(0,.35,.19,root),(.75,.22,.15,root),(1.25,.32,.15,root+12),(1.75,.2,.14,root)]:
         t=time(length+.12)
@@ -99,7 +91,7 @@ for bar in range(2,19):
 
 # A sparse D-minor motif, leaving the UI demonstrations room to breathe.
 motif=[74,None,81,77,None,72,76,None,74,69,None,72,77,None,76,72]
-for step in range(16,144):
+for step in range(16,(DURATION-4)*4):
     note=motif[step%16]
     if note is None:
         continue
@@ -111,56 +103,48 @@ for step in range(16,144):
     place(music,signal,at+.375,gain*.24,-pan)
     place(music,signal,at+.75,gain*.10,pan)
 
-# Low, luminous downbeats and stereo reverse air across each editorial cut.
-for at in [4,10,16,22,26,32,36]:
-    sweep=air(.52,True)
-    place(effects,sweep,at-.36,.16,-.35)
-    place(effects,sweep[::-1],at-.05,.11,.35)
-    t=time(.6)
-    thump=np.sin(2*np.pi*(58*t+1.3*(1-np.exp(-t/.07))))*np.exp(-t/.15)*(1-np.exp(-t/.004))
-    place(effects,thump,at,.17)
-
-# Sonic identity: soft glass, tuned confirmations, no mouse-click samples.
-def glass(at,note=86,level=.15):
+# V2: no air sweeps, reverse noise, risers, or sound on continuous motion.
+# Soft low-register tine accents replace the transition swipes.
+def tine(at, note=62, level=.11):
     t=time(.7)
     f=hz(note)
-    signal=(np.sin(2*np.pi*f*t)*np.exp(-t/.16)+.28*np.sin(2*np.pi*f*2.71*t)*np.exp(-t/.055))*(1-np.exp(-t/.003))
-    place(effects,signal,at,level,-.15)
-    place(effects,signal,at+.12,level*.24,.4)
+    signal=(np.sin(2*np.pi*f*t)+.14*np.sin(2*np.pi*f*3*t)*np.exp(-t/.08))
+    signal*=(1-np.exp(-t/.012))*np.exp(-t/.16)
+    place(effects,signal,at,level,-.12)
+    place(effects,signal,at+.14,level*.13,.2)
+
+for at in [4,14,20,34,40,44]:
+    tine(at,62,.10)
 
 def confirm(at):
-    place(effects,pluck(81,.65,True),at,.19,-.25)
-    place(effects,pluck(86,.85,True),at+.085,.15,.25)
+    tine(at,74,.105)
+    tine(at+.085,77,.075)
 
-glass(.18,74,.13)
-place(effects,air(.85,True),.05,.14)
-glass(4.25,86,.13)
-confirm(8.5)
-for at in [10.8,12.9,14.2]:
-    place(effects,air(.42),at,.08,pan=.2)
-glass(17.1,81,.11)
-confirm(18.75)
-glass(20.25,86,.095)
-glass(20.5,89,.08)
-glass(22.65,81,.12)
-confirm(24.05)
-confirm(25)
-glass(26.85,74,.13)
-place(effects,air(1.8),27.3,.06)
-confirm(29.9)
-place(effects,air(.8,True),32.3,.11)
-glass(33.8,89,.10)
-confirm(36.5)
-place(effects,air(.85,True),38.8,.20)
+tine(.18,62,.08)
+# Discrete presses only; the continuous cursor and canvas are intentionally quiet.
+for at,note in [(5.2,74),(5.7,72),(6.2,76),(6.7,77),
+                (7.35,74),(7.9,77),(8.45,81)]:
+    tine(at,note,.045)
+tine(21.54,69,.07)
+confirm(23.85)
+tine(25.95,74,.06)
+tine(26.3,77,.06)
+tine(29.31,69,.08)
+confirm(31.27)
+confirm(32.6)
+tine(34.85,62,.08)
+confirm(37.9)
+tine(41.8,77,.065)
+confirm(44.5)
 
 # Lightweight sidechain gives the score its pulse without masking the UI accents.
 ts=np.arange(N)/SR
 duck=.72+.28*(1-np.exp(-np.mod(ts,.5)/.07))
 music*=duck[:,None]
 fadein=np.minimum(ts/.25,1)
-fadeout=np.clip((40-ts)/1.6,0,1)
+fadeout=np.clip((DURATION-ts)/1.6,0,1)
 music*=fadein[:,None]*fadeout[:,None]
-effects*=np.minimum((40-ts)/.18,1)[:,None]
+effects*=np.minimum((DURATION-ts)/.18,1)[:,None]
 
 def write(name,track,peak):
     track=np.tanh(track*1.1)

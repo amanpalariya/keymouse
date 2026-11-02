@@ -1,218 +1,130 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import {
-  Backdrop,
-  Chrome,
-  C,
-  Cursor,
-  Footer,
-  Headline,
-  Key,
-  KeyHint,
-  Panel,
-  Pill,
-  mono,
-  tween,
-  lerp,
-} from "../design";
+import { C, Cursor, lerp, mono, tween } from "../design";
+import { Stage } from "../stage";
+import { Keyboard, MouseButton } from "../Keyboard";
 
 export const Move: React.FC = () => {
   const t = useCurrentFrame() / useVideoConfig().fps;
-  const times = [0, 0.5, 1.2, 1.35, 2.25, 2.4, 2.9, 3.1, 3.6, 3.8, 4.2];
-  const x = lerp(
+  // Stable overview: pointer movement and three clicks, then time to read.
+  const cursorX = lerp(
     t,
-    times,
-    [180, 180, 180, 180, 730, 730, 730, 730, 510, 510, 730],
+    [0, 1.2, 1.55, 2.7, 3.05],
+    [1370, 1370, 1250, 1250, 1370],
   );
-  const y = lerp(
-    t,
-    times,
-    [420, 420, 200, 200, 200, 200, 397, 397, 397, 397, 397],
-  );
-  const clicked = t > 4.5;
-  const key =
-    t < 0.5
-      ? "⌥"
-      : t < 1.3
-        ? "K"
-        : t < 2.4
-          ? "L"
-          : t < 3.1
-            ? "J"
-            : t < 3.8
-              ? "H"
-              : t < 4.35
-                ? "L"
-                : "Space";
+  const cursorY = lerp(t, [0, 1.7, 2.05, 2.2, 2.55], [480, 480, 570, 570, 480]);
+  const pressed =
+    t > 1.2 && t < 1.55
+      ? ["←"]
+      : t > 1.7 && t < 2.05
+        ? ["↓"]
+        : t > 2.2 && t < 2.55
+          ? ["↑"]
+          : t > 2.7 && t < 3.05
+            ? ["→"]
+            : t > 3.35 && t < 3.7
+              ? ["Space"]
+              : t > 3.9 && t < 4.25
+                ? ["E"]
+                : t > 4.45 && t < 4.8
+                  ? ["R"]
+                  : [];
+  const equivalents: Record<string, string[]> = {
+    "←": ["←", "H"],
+    "↓": ["↓", "J"],
+    "↑": ["↑", "K"],
+    "→": ["→", "L"],
+    Space: ["Space", "W"],
+  };
+  const active = pressed.flatMap((key) => equivalents[key] ?? [key]);
   return (
-    <Backdrop>
-      <Chrome chapter="MOVE + CLICK" index="01" />
-      <Headline
-        eyebrow="TAP OPTION. TAKE CONTROL."
-        first="Point."
-        second="With keys."
-        desc="Move in any direction. Land exactly where you want."
-      />
-      <KeyHint
-        label={
-          t < 0.5
-            ? "Tap Option to activate"
-            : clicked
-              ? "Space or W → left click"
-              : "H J K L or arrow keys → move"
-        }
+    <Stage title="Mapped.">
+      <div
+        style={{
+          position: "absolute",
+          left: 450,
+          top: 209,
+          display: "flex",
+          gap: 14,
+          opacity: tween(t, 0.15, 0.65),
+        }}
       >
-        <Key active={key === "⌥"}>⌥</Key>
-        <span style={{ width: 12 }} />
-        {["H", "J", "K", "L"].map((k) => (
-          <Key key={k} active={key === k}>
-            {k}
-          </Key>
-        ))}
-        {clicked ? (
-          <Key active wide>
-            Space
-          </Key>
-        ) : null}
-      </KeyHint>
-      <Panel title="Workspace">
-        <div style={{ padding: "37px 42px" }}>
+        {["LEFT", "MIDDLE", "RIGHT"].map((label, i) => (
           <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
+            key={label}
+            style={{ width: 96, textAlign: "center", color: C.muted }}
           >
-            <div style={{ fontSize: 33, fontWeight: 750, letterSpacing: -1 }}>
-              Make room for great work.
+            <MouseButton button={i} size={41} />
+            <div style={{ fontFamily: mono, fontSize: 17, marginTop: 10 }}>
+              {label}
             </div>
-            <Pill>⌥ Active</Pill>
           </div>
-          <div style={{ fontSize: 18, color: "#8591a3", marginTop: 8 }}>
-            One keyboard. Every part of your desktop.
-          </div>
-          <div style={{ display: "flex", gap: 23, marginTop: 43 }}>
-            {[
-              ["01", "Discover", "#dfe8ff"],
-              ["02", "Create", "#ddf0ed"],
-              ["03", "Launch", "#e9e3ff"],
-            ].map(([n, title, bg], i) => (
-              <div
-                key={n}
-                style={{
-                  width: 293,
-                  height: 350,
-                  padding: 25,
-                  borderRadius: 18,
-                  background: clicked && i === 2 ? "#e7efff" : "white",
-                  border:
-                    clicked && i === 2
-                      ? "2px solid #3677ff"
-                      : "2px solid #e5eaf2",
-                  boxShadow:
-                    clicked && i === 2 ? "0 15px 40px #3677ff20" : "none",
-                }}
-              >
-                <div
-                  style={{
-                    background: bg,
-                    borderRadius: 12,
-                    height: 151,
-                    padding: 22,
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 76,
-                      height: 76,
-                      border: "12px solid #ffffffaa",
-                      borderRadius: i === 0 ? "50%" : 17,
-                      rotate: `${i * 23}deg`,
-                      position: "absolute",
-                      left: 75,
-                      top: 36,
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: mono,
-                      fontSize: 14,
-                      color: "#293a5a77",
-                    }}
-                  >
-                    {n}
-                  </span>
-                </div>
-                <div style={{ fontSize: 25, fontWeight: 750, marginTop: 24 }}>
-                  {title}
-                </div>
-                <div
-                  style={{
-                    height: 7,
-                    background: "#e9edf3",
-                    width: "85%",
-                    marginTop: 19,
-                    borderRadius: 8,
-                  }}
-                />
-                <div
-                  style={{
-                    height: 7,
-                    background: "#e9edf3",
-                    width: "60%",
-                    marginTop: 10,
-                    borderRadius: 8,
-                  }}
-                />
-                <div
-                  style={{
-                    fontSize: 14,
-                    color: clicked && i === 2 ? C.blue : "#8995a8",
-                    marginTop: 25,
-                    fontFamily: mono,
-                  }}
-                >
-                  {clicked && i === 2 ? "✓ SELECTED" : "OPEN PROJECT ↗"}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <Cursor
-          x={x}
-          y={y}
-          press={t > 4.5 && t < 4.66}
-          label={clicked ? "Left click" : undefined}
-        />
-        {t < 0.5 ? (
+        ))}
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: 1020,
+          top: 227,
+          display: "flex",
+          gap: 26,
+          opacity: tween(t, 0.25, 0.7),
+        }}
+      >
+        {["←", "↓", "↑", "→"].map((arrow) => (
           <div
+            key={arrow}
             style={{
-              position: "absolute",
-              inset: 0,
-              background: "#eff3fa88",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: 1 - tween(t, 0.25, 0.5),
+              width: 76,
+              textAlign: "center",
+              color: "#93afd8",
+              fontSize: 53,
+              lineHeight: 1,
             }}
           >
-            <Pill
-              style={{
-                background: C.dark,
-                color: "white",
-                padding: "18px 28px",
-                fontSize: 24,
-              }}
-            >
-              ⌥ Tap to activate
-            </Pill>
+            {arrow}
           </div>
-        ) : null}
-      </Panel>
-      <Footer text="01   /   MOVE FREELY. CLICK INSTANTLY." />
-    </Backdrop>
+        ))}
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: 190,
+          top: 339,
+          perspective: 2200,
+          opacity: tween(t, 0, 0.4),
+        }}
+      >
+        <Keyboard
+          t={t}
+          active={active}
+          style={{
+            transform: `rotateX(${tween(t, 0, 1, 38, 17)}deg) rotateY(${tween(t, 0, 1, -10, -2)}deg) rotateZ(-3deg) translateY(${tween(t, 0, 0.8, 120, 0)}px)`,
+            transformOrigin: "center top",
+          }}
+        />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          opacity: tween(t, 0.75, 1.1),
+          pointerEvents: "none",
+        }}
+      >
+        <Cursor
+          x={cursorX}
+          y={cursorY}
+          size={43}
+          light
+          pressed={pressed}
+          press={
+            (t > 3.35 && t < 3.5) ||
+            (t > 3.9 && t < 4.05) ||
+            (t > 4.45 && t < 4.6)
+          }
+        />
+      </div>
+    </Stage>
   );
 };

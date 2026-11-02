@@ -1,133 +1,112 @@
 import React from "react";
-import {
-  CanvasImage,
-  staticFile,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import {
-  Backdrop,
-  Chrome,
-  C,
-  Cursor,
-  Footer,
-  Headline,
-  Key,
-  KeyHint,
-  mono,
-  tween,
-  lerp,
-} from "../design";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { C, Cursor, Key, lerp, mono, tween } from "../design";
+import { AppWindow, Stage, InputDock } from "../stage";
 
 export const Tune: React.FC = () => {
   const t = useCurrentFrame() / useVideoConfig().fps;
+  const fine = t > 1.8;
+  const x = lerp(t, [0.3, 1.6, 1.8, 3.4], [320, 1400, 1400, 1480]);
   return (
-    <Backdrop>
-      <Chrome chapter="YOUR MOTION" index="06" />
-      <Headline
-        eyebrow="DIAL IN YOUR OWN FEEL."
-        first="Fast. Fine."
-        second="All yours."
-        desc="F for speed. D for precision. Tune speed, acceleration, and deceleration in Settings."
-      />
-      <KeyHint label={t < 1.8 ? "Hold F → 3× speed" : "Hold D → ¼× speed"}>
-        <Key active={t > 0.4 && t < 1.7}>F</Key>
-        <Key active={t > 1.8 && t < 3.5}>D</Key>
-        <span style={{ fontSize: 23, color: C.muted, marginLeft: 20 }}>
-          {t < 1.8 ? "Cover ground." : "Find the pixel."}
-        </span>
-      </KeyHint>
+    <Stage title={fine ? "Precise." : "Fast."}>
+      <AppWindow title="Motion" />
       <div
         style={{
           position: "absolute",
-          left: 1060,
-          top: 162,
-          width: 569,
-          height: 767,
-          perspective: 1400,
-          opacity: tween(t, 0, 0.4),
-          transform: `rotateY(${tween(t, 0, 0.8, -14, -4)}deg) rotateZ(2deg) translateY(${tween(t, 0, 0.8, 70, 0)}px)`,
-          boxShadow: "0 35px 90px #0005",
-          borderRadius: 20,
-          overflow: "hidden",
-        }}
-      >
-        <CanvasImage
-          src={staticFile("motion.png")}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 812,
-          top: 363,
-          fontFamily: mono,
-          fontSize: 13,
+          left: 330,
+          top: 315,
+          fontSize: 150,
+          fontWeight: 650,
+          letterSpacing: -8,
           color: C.cyan,
-          letterSpacing: 1.3,
-          opacity: tween(t, 0.5, 0.9),
+          opacity: tween(t, 0, 0.4),
         }}
       >
-        REAL APP.
-        <br />
-        YOUR SETTINGS.
-        <div
-          style={{
-            marginTop: 15,
-            width: 202,
-            height: 1,
-            background: "linear-gradient(90deg,#8de8ff55,#8de8ff)",
-          }}
-        />
+        {fine ? "¼×" : "3×"}
       </div>
       <div
         style={{
           position: "absolute",
-          left: 1660,
-          top: 370,
-          fontFamily: mono,
-          fontSize: 15,
-          color: C.muted,
-          lineHeight: 2,
-        }}
-      >
-        650 pt/s
-        <br />
-        0.45s ramp
-        <br />
-        3× fast
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 870,
-          top: 915,
-          width: 800,
+          left: 320,
+          top: 565,
+          width: 1160,
           height: 2,
-          background: "#27416a",
+          background: "#29496c",
         }}
-      >
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: 1440,
+          top: 525,
+          width: 80,
+          height: 80,
+          border: `2px solid ${t > 3.35 ? C.cyan : "#4f7caf"}`,
+          borderRadius: "50%",
+          boxShadow: t > 3.35 ? "0 0 80px #8de8ff44" : undefined,
+        }}
+      />
+      {Array.from({ length: 7 }, (_, i) => (
         <div
+          key={i}
           style={{
             position: "absolute",
-            left: lerp(t, [0.3, 1.6, 1.8, 3.4], [0, 610, 610, 675]),
-            top: -5,
-            width: 12,
-            height: 12,
-            borderRadius: "50%",
-            background: C.cyan,
-            boxShadow: "0 0 22px #8de8ff",
+            left: 320 + i * 180,
+            top: 551,
+            width: 1,
+            height: 30,
+            background: "#3b638c",
           }}
         />
-        <Cursor
-          x={lerp(t, [0.3, 1.6, 1.8, 3.4], [0, 610, 610, 675])}
-          y={-4}
-          size={26}
-          light
-        />
+      ))}
+      <Cursor
+        x={x}
+        y={550}
+        light
+        size={60}
+        pressed={
+          t > 0.3 && t < 1.7 ? ["F", "→"] : fine && t < 3.5 ? ["D", "→"] : []
+        }
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: 320,
+          top: 700,
+          display: "flex",
+          gap: 96,
+          fontFamily: mono,
+          color: C.muted,
+          fontSize: 19,
+        }}
+      >
+        {["SPEED", "ACCELERATION", "DECELERATION"].map((s, i) => (
+          <div key={s}>
+            <div>{s}</div>
+            <div
+              style={{
+                marginTop: 20,
+                width: i ? 260 : 200,
+                height: 3,
+                background: "#2b3a52",
+              }}
+            >
+              <div
+                style={{
+                  height: 3,
+                  width: i === 1 ? "70%" : i === 2 ? "35%" : "55%",
+                  background: "#8de8ff88",
+                }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
-      <Footer text="06   /   SPEED. ACCELERATION. CONTROL." />
-    </Backdrop>
+      <InputDock>
+        <Key active={t > 0.3 && t < 1.7}>F</Key>
+        <Key active={fine && t < 3.5}>D</Key>
+        <Key active={(t > 0.3 && t < 1.7) || (fine && t < 3.5)}>→</Key>
+      </InputDock>
+    </Stage>
   );
 };

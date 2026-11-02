@@ -1,36 +1,14 @@
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import {
-  Backdrop,
-  Chrome,
-  C,
-  Footer,
-  Key,
-  Reveal,
-  mono,
-  tween,
-} from "../design";
+import { C, Key, Reveal, tween } from "../design";
+import { Stage } from "../stage";
 import { Cursor3D } from "../Cursor3D";
 
 export const Closing: React.FC = () => {
   const t = useCurrentFrame() / useVideoConfig().fps;
   return (
-    <Backdrop>
-      <Chrome chapter="STAY IN FLOW" index="07" />
-      <div style={{ position: "absolute", left: 108, top: 223 }}>
-        <Reveal>
-          <div
-            style={{
-              fontFamily: mono,
-              fontSize: 17,
-              letterSpacing: 3,
-              color: C.cyan,
-              marginBottom: 32,
-            }}
-          >
-            MOVE. CLICK. SCROLL. SELECT. DRAG.
-          </div>
-        </Reveal>
+    <Stage>
+      <div style={{ position: "absolute", left: 108, top: 270 }}>
         <Reveal delay={0.08}>
           <div
             style={{
@@ -56,17 +34,12 @@ export const Closing: React.FC = () => {
             Yours.
           </div>
         </Reveal>
-        <Reveal delay={0.4}>
-          <div style={{ marginTop: 38, fontSize: 31, color: C.muted }}>
-            Your keyboard. In full control.
-          </div>
-        </Reveal>
       </div>
       <div
         style={{
           position: "absolute",
           left: 108,
-          top: 756,
+          top: 716,
           display: "flex",
           alignItems: "center",
           gap: 20,
@@ -76,12 +49,24 @@ export const Closing: React.FC = () => {
         <Key wide active={t > 1.25 && t < 1.5}>
           ⌥ Option
         </Key>
-        <span style={{ fontSize: 23, color: C.muted }}>to start</span>
+        <span style={{ fontSize: 23, color: C.muted }}>Start</span>
         <div
           style={{ height: 35, width: 1, background: C.line, margin: "0 15px" }}
         />
         <Key>Esc</Key>
-        <span style={{ fontSize: 23, color: C.muted }}>to stop</span>
+        <span style={{ fontSize: 23, color: C.muted }}>Stop</span>
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: 108,
+          top: 945,
+          fontSize: 28,
+          color: C.muted,
+          opacity: tween(t, 0.8, 1.2),
+        }}
+      >
+        amanpalariya.github.io/keymouse
       </div>
       <div
         style={{
@@ -95,7 +80,6 @@ export const Closing: React.FC = () => {
         }}
       />
       <Cursor3D outro />
-      <Footer text="KEYMOUSE   /   amanpalariya.github.io/keymouse" />
       <div
         style={{
           position: "absolute",
@@ -105,6 +89,6 @@ export const Closing: React.FC = () => {
           pointerEvents: "none",
         }}
       />
-    </Backdrop>
+    </Stage>
   );
 };
