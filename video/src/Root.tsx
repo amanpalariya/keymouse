@@ -22,7 +22,7 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         fps={60}
-        durationInFrames={3480}
+        durationInFrames={3300}
       />
       <Folder name="Scenes">
         <Composition
@@ -47,7 +47,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={1080}
+          durationInFrames={900}
         />
         <Composition
           id="Opening"
