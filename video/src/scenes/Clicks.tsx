@@ -228,6 +228,22 @@ const Article: React.FC<ArticleRefs> = ({
               </span>
             </div>
           </div>
+          <div
+            style={{
+              marginTop: 22,
+              fontSize: 20,
+              lineHeight: "32px",
+              color: "#b7c0cc",
+            }}
+          >
+            The lake formed about two million years ago, and its present extent
+            was shaped during the ice ages. Forests and mountain slopes surround
+            the shoreline.
+          </div>
+          <div style={{ marginTop: 18, fontSize: 20, lineHeight: "32px" }}>
+            Lakeside communities offer access to hiking, winter sports, and
+            recreation on the water throughout the year.
+          </div>
         </div>
         <div>
           <div ref={photoRef}>
