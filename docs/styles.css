@@ -9,4 +9,6 @@
 .step kbd{font-size:11px;padding:1px 5px;min-width:0;vertical-align:baseline}h3 kbd{font-size:12px}
 
 .github-link{display:inline-flex;align-items:center;gap:7px;font-size:14px}.github-icon{flex-shrink:0}.hero-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:18px 24px}.hero-actions .github-link{text-decoration:none;color:var(--muted)}.hero-actions .github-link:hover{color:var(--text)}
+.demo{padding-bottom:64px;text-align:center}.demo h2{font-size:24px;margin-bottom:12px}.demo>p{font-size:14px}.demo-player{aspect-ratio:16/9;margin-top:24px;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--stage)}.demo-player iframe{display:block;width:100%;height:100%;border:0}.demo .demo-link{margin-top:14px;font-size:13px}
+@media(max-width:760px){.demo{padding-bottom:42px}}
 @media(max-width:450px){.header{flex-wrap:wrap;justify-content:center;gap:14px;padding-block:18px}.header nav{flex-wrap:wrap;justify-content:center}}
