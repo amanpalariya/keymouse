@@ -27,7 +27,7 @@ def place(track, signal, at, gain=1, pan=0):
         elif at < 62: at = 26 + np.interp(at-40,[0,.8,2.5,3.9,4.9,5.2,6.3,8,8.6,9.8,10.1,11.1,11.5,13,13.55,14.6,15.5,15.8,17.36,17.7,19.2,19.75,22],[0,1.4,3,3.35,4.35,4.6,5.7,6,6.6,7.8,8.1,9.1,9.4,10.9,11.3,11.7,12.6,12.9,14.5,14.8,16.3,16.7,18])
         elif at < 74:
             old=np.interp(at-62,[0,1.15,2.15,5.4,6.4,8,12],[0,1.15,1.15,4.4,4.4,6,10])
-            at=44+np.interp(old,[0,.85,1.25,3.6,3.9,4.4,6.5,6.9,8.6,8.9,10],[0,.65,.9,2.65,3,3.25,3.4,3.65,5.3,5.6,7])
+            at=44+np.interp(old,[0,.85,1.25,3.6,3.9,4.4,6.5,6.9,8.6,8.9,10],[0,1.4,1.65,3.4,3.75,4,4.15,4.4,6.05,6.35,7])
         else: at = 51 + (at-74)
     start = int(at * SR)
     offset = max(0, -start)
@@ -145,4 +145,4 @@ def write(name,track,peak):
         wav.setnchannels(2);wav.setsampwidth(2);wav.setframerate(SR);wav.writeframes(pcm.tobytes())
     print(f'{name}: {DURATION}s stereo, peak {20*np.log10(np.max(np.abs(track))):.1f} dBFS, RMS {20*np.log10(np.sqrt(np.mean(track**2))):.1f} dBFS')
 write('in-full-control-original-clean-v10.wav',music,.70)
-write('workflow-accents-v10.wav',effects,.32)
+write('workflow-accents-v11.wav',effects,.32)

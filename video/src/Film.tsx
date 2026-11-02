@@ -102,7 +102,7 @@ export const Film: React.FC = () => {
       />
       <Audio
         name="Designed sound — soft tine accents / no swipes"
-        src={staticFile("audio/workflow-accents-v10.wav")}
+        src={staticFile("audio/workflow-accents-v11.wav")}
         premountFor={fps}
         volume={0.35}
       />

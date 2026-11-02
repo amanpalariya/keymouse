@@ -74,7 +74,7 @@ The existing tonal UI accents remain quiet. No swipes or movement effects.
 Current 48 kHz stereo assets:
 
 - `public/audio/in-full-control-original-clean-v10.wav`
-- `public/audio/workflow-accents-v10.wav`
+- `public/audio/workflow-accents-v11.wav`
 
 `python scripts/score.py` rebuilds these tracks with numpy. Unique asset names
 ensure Studio loads the replacement rather than cached audio.
@@ -130,3 +130,7 @@ repairs is about 0.4 seconds. The final result hold is shortened as well.
 
 The post-tab hold is trimmed by three seconds. The completed tab remains
 visible for about 0.9 seconds before the editor transition begins.
+
+Board lead-in: first pickup starts at 1.4 seconds, 0.75 seconds later than
+before. The movement and short inter-drag gap retain their timing; the final
+result hold absorbs the delay, keeping the film at 55 seconds.
