@@ -21,9 +21,9 @@ export const MouseVisual: React.FC<{
         y2="255"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#4b6b92" />
-        <stop offset=".5" stopColor="#1c344f" />
-        <stop offset="1" stopColor="#0d1d31" />
+        <stop stopColor="#555b64" />
+        <stop offset=".5" stopColor="#2b2f35" />
+        <stop offset="1" stopColor="#14161b" />
       </linearGradient>
       <linearGradient
         id="mouse-button"
@@ -33,8 +33,8 @@ export const MouseVisual: React.FC<{
         y2="120"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#456486" />
-        <stop offset="1" stopColor="#203a56" />
+        <stop stopColor="#4b5058" />
+        <stop offset="1" stopColor="#292d33" />
       </linearGradient>
       <linearGradient
         id="mouse-lit"
@@ -50,27 +50,27 @@ export const MouseVisual: React.FC<{
     </defs>
     <path
       d="M12 102C12 35 38 8 90 8S168 35 168 102V190C168 247 142 271 90 271S12 247 12 190Z"
-      fill="#081323"
-      stroke="#537ca7"
+      fill="#0c0e12"
+      stroke="#5b626d"
       strokeWidth="2"
     />
     <path
       d="M12 96C12 29 38 2 90 2S168 29 168 96V184C168 241 142 265 90 265S12 241 12 184Z"
       fill="url(#mouse-shell)"
-      stroke="#84b2dd"
+      stroke="#929aa5"
       strokeWidth="1.4"
     />
     <path
       d="M18 99C18 37 40 10 85 9V124H18Z"
       fill={left ? "url(#mouse-lit)" : "url(#mouse-button)"}
-      stroke={left ? "#b9f4ff" : "#668bb0"}
+      stroke={left ? "#b9f4ff" : "#69717c"}
       strokeWidth="1.2"
       transform={`translate(0 ${left ? 2 : 0})`}
     />
     <path
       d="M95 9C140 10 162 37 162 99V124H95Z"
       fill={right ? "url(#mouse-lit)" : "url(#mouse-button)"}
-      stroke={right ? "#b9f4ff" : "#668bb0"}
+      stroke={right ? "#b9f4ff" : "#69717c"}
       strokeWidth="1.2"
       transform={`translate(0 ${right ? 2 : 0})`}
     />
@@ -80,15 +80,15 @@ export const MouseVisual: React.FC<{
       width="20"
       height="47"
       rx="10"
-      fill={middle ? "url(#mouse-lit)" : "#102238"}
-      stroke={middle ? "#d0f8ff" : "#8bb8e1"}
+      fill={middle ? "url(#mouse-lit)" : "#15181d"}
+      stroke={middle ? "#d0f8ff" : "#959da7"}
       strokeWidth="2"
     />
     {[54, 62, 70, 78].map((y) => (
       <path
         key={y}
         d={`M85 ${y}H95`}
-        stroke={middle ? "#29618d" : "#6387ad"}
+        stroke={middle ? "#29618d" : "#747d89"}
         strokeWidth="1.3"
       />
     ))}

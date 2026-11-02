@@ -285,7 +285,8 @@ const measure = (element: HTMLElement, root: HTMLElement): Rect => {
 };
 
 export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
-  const t = useCurrentFrame() / useVideoConfig().fps + offset;
+  const t =
+    (useCurrentFrame() / useVideoConfig().fps) * 1.1818181818181819 + offset;
   const factRef = useRef<HTMLSpanElement>(null);
   const linkRef = useRef<HTMLSpanElement>(null),
     photoRef = useRef<HTMLDivElement>(null),

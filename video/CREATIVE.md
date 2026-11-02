@@ -1,20 +1,20 @@
 # KeyMouse — In Full Control / V5
 
-78 seconds · 1920 × 1080 · 60 fps · 120 BPM
+66 seconds · 1920 × 1080 · 60 fps · 120 BPM
 
 A dark product film built around recognizable tasks. The application content
 uses the former title space. There are no large action headings or plus-sign
 separators. Tall windows extend below the frame, with compact input feedback
 beside the action and a small reference dock.
 
-| Time  | Use case           | What the viewer sees                                                                                                                                                                                |
-| ----- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 00–04 | Stay on the keys   | Beveled 3D flying cursor and HJKL                                                                                                                                                                   |
-| 04–14 | Keyboard overview  | Preserved V4 keyboard, shared mouse perspective, aliases and sustained click highlights                                                                                                             |
-| 14–40 | Research a lake    | A minimal Wikipedia reading view: select the depth fact, R → Copy, R → Save Image As → Save, and E on Crater Lake to compare in a new background tab                                                |
-| 40–62 | Scroll and retouch | One continuous photo editor and canvas. Scroll vertically and horizontally, then normal → fast → slow movement to heal two small spots. The viewport, zoom, tool, cursor position and image persist |
-| 62–74 | Move and reorder   | Drag Launch video to the right, release it, then pick up the same card and drag downward. App icon moves up to make the new ordering clear                                                          |
-| 74–78 | Every move. Yours  | 3D cursor fly-out; Option to Start, Escape to Stop                                                                                                                                                  |
+| Time  | Use case          | Motion                                                                                    |
+| ----- | ----------------- | ----------------------------------------------------------------------------------------- |
+| 00–04 | Opener            | Flying keycaps, beveled cursor and shared upward exit                                     |
+| 04–12 | Keyboard overview | Neutral gray hardware, active highlights, fly-in, continuous camera drift and upward exit |
+| 12–34 | Research a lake   | Copy, save and compare; shorter travel and result holds                                   |
+| 34–53 | Photo workflow    | Continuous scrolling and precision retouching, paced faster                               |
+| 53–62 | Board             | Faster horizontal drag and vertical reorder                                               |
+| 62–66 | Closing           | Flying cursor and final lockup                                                            |
 
 ## Current controls and visual decisions
 
@@ -57,7 +57,7 @@ beside the action and a small reference dock.
   Actual pressed states, clicks and keycaps still release at their real time.
   This is deterministic for playback, seeking and rendering.
 
-- Every separate scene boundary has an 18-frame crossfade with overlap accounted for
+- Separate scene boundaries have eased 30-frame transitions with overlap accounted for
   in the timeline. The scroll-to-retouch boundary has been removed entirely. Menus ease in/out; dragged cards
   lift and settle smoothly. Extra holds preserve input speed while allowing
   time to see completed results.
@@ -73,8 +73,8 @@ The existing tonal UI accents remain quiet. No swipes or movement effects.
 
 Current 48 kHz stereo assets:
 
-- `public/audio/in-full-control-original-clean-v5.wav`
-- `public/audio/workflow-accents-v5-final.wav`
+- `public/audio/in-full-control-original-clean-v7.wav`
+- `public/audio/workflow-accents-v7.wav`
 
 `python scripts/score.py` rebuilds these tracks with numpy. Unique asset names
 ensure Studio loads the replacement rather than cached audio.
@@ -106,3 +106,11 @@ the input, menu, dialog and tab animations illustrate real KeyMouse controls.
 The photo editor and board are code-native application illustrations.
 
 Export on demand: `npx remotion render KeyMouse out/keymouse.mp4`.
+
+## Motion revision after V6
+
+V6 remains preserved at `codex/keymouse-video-v6`. The current cut adds
+floating keys without extra copy, a coordinated opener/keyboard fly-through,
+neutral hardware, continuous camera drift, and directional window slides.
+Movement clocks are accelerated together with their input feedback and sounds.
+The music retains its original tempo; UI accents are retimed to the new cut.

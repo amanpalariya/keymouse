@@ -103,9 +103,9 @@ const Cap: React.FC<{
   const glow = active
     ? "#9cefff"
     : clicks
-      ? "#3c8fc7"
+      ? "#a9b1bc"
       : direction || arrow
-        ? "#7c9cff"
+        ? "#a9b1bc"
         : mapped
           ? "#8698b7"
           : "#425068";
@@ -118,10 +118,10 @@ const Cap: React.FC<{
         background: active
           ? "linear-gradient(145deg,#b0efff,#5badfa)"
           : clicks
-            ? "linear-gradient(145deg,#1e3f55,#102136)"
+            ? "linear-gradient(145deg,#363b42,#191c21)"
             : direction || arrow
-              ? "linear-gradient(145deg,#283e69,#16213b)"
-              : "linear-gradient(145deg,#263143,#141c2b)",
+              ? "linear-gradient(145deg,#34383f,#1b1e24)"
+              : "linear-gradient(145deg,#30343a,#17191e)",
         borderRadius: small ? 9 : 13,
         border: `1px solid ${active ? "#beefff" : mapped ? glow + "70" : "#ffffff0b"}`,
         boxShadow: active
@@ -188,7 +188,7 @@ export const Keyboard: React.FC<{
       width: 1540,
       padding: "23px 26px 29px",
       borderRadius: 31,
-      background: "linear-gradient(150deg,#263246,#0c1321 60%)",
+      background: "linear-gradient(150deg,#35393f,#111318 60%)",
       border: "1px solid #98b9ef35",
       boxShadow: "0 19px 0 #050912,0 20px 0 1px #6e97ce26,0 80px 100px #0008",
       fontFamily: font,

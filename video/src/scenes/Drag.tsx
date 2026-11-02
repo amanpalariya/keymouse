@@ -92,7 +92,9 @@ const TaskCard: React.FC<{
 );
 
 export const Drag: React.FC = () => {
-  const t = dragTime(useCurrentFrame() / useVideoConfig().fps);
+  const t = dragTime(
+    (useCurrentFrame() / useVideoConfig().fps) * 1.3333333333333333,
+  );
   const dx = lerp(t, [1.25, 3.6], [0, 952]);
   const lifted = t > 0.85 && t < 3.9;
   const done = t >= 3.9;
