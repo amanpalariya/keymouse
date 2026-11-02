@@ -21,7 +21,7 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         fps={60}
-        durationInFrames={3360}
+        durationInFrames={4440}
       />
       <Folder name="Scenes">
         <Composition
@@ -30,7 +30,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={240}
+          durationInFrames={600}
         />
         <Composition
           id="Clicks"
@@ -38,7 +38,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={1320}
+          durationInFrames={1560}
         />
         <Composition
           id="Opening"
@@ -62,7 +62,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={360}
+          durationInFrames={480}
         />
         <Composition
           id="Select"
@@ -70,7 +70,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={360}
+          durationInFrames={480}
         />
         <Composition
           id="Context-and-middle-click"
@@ -78,7 +78,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={960}
+          durationInFrames={1080}
         />
         <Composition
           id="Drag-and-drop"
@@ -86,7 +86,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={60}
-          durationInFrames={360}
+          durationInFrames={720}
         />
         <Composition
           id="Closing"

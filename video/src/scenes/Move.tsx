@@ -43,23 +43,10 @@ export const Move: React.FC = () => {
     W: ["W", "Space"],
   };
   const active = pressed.flatMap((key) => equivalents[key] ?? [key]);
+  const mouseX = lerp(t, [1.2, 1.55, 2.7, 3.05], [0, -55, -55, 0]);
+  const mouseY = lerp(t, [1.7, 2.05, 2.2, 2.55], [0, 28, 28, 0]);
   return (
     <Stage demo>
-      <div
-        style={{
-          position: "absolute",
-          left: 560,
-          top: 145,
-          scale: 0.55,
-          transformOrigin: "top left",
-        }}
-      >
-        <MouseVisual
-          left={pressed.includes("W")}
-          middle={pressed.includes("E")}
-          right={pressed.includes("R")}
-        />
-      </div>
       <div
         style={{
           position: "absolute",
@@ -90,24 +77,44 @@ export const Move: React.FC = () => {
           position: "absolute",
           left: 190,
           top: 339,
+          width: 1540,
+          zIndex: 2,
           perspective: 2200,
           opacity: tween(t, 0, 0.4),
         }}
       >
-        <Keyboard
-          t={t}
-          active={active}
+        <div
           style={{
             transform: `rotateX(${tween(t, 0, 1, 38, 17)}deg) rotateY(${tween(t, 0, 1, -10, -2)}deg) rotateZ(-3deg) translateY(${tween(t, 0, 0.8, 120, 0)}px)`,
             transformOrigin: "center top",
+            position: "relative",
           }}
-        />
+        >
+          <div
+            style={{
+              position: "absolute",
+              left: 280 + mouseX,
+              top: -199 + mouseY,
+              scale: 1.15,
+              transformOrigin: "top center",
+              zIndex: 0,
+            }}
+          >
+            <MouseVisual
+              left={pressed.includes("W")}
+              middle={pressed.includes("E")}
+              right={pressed.includes("R")}
+            />
+          </div>
+          <Keyboard t={t} active={active} style={{ zIndex: 2 }} />
+        </div>
       </div>
       <div
         style={{
           position: "absolute",
           inset: 0,
           opacity: tween(t, 0.75, 1.1),
+          zIndex: 5,
           pointerEvents: "none",
         }}
       >

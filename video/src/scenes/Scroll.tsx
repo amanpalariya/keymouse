@@ -1,3 +1,4 @@
+import { scrollTime } from "../pacing";
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Cursor, Key, lerp, tween } from "../design";
@@ -5,7 +6,7 @@ import { BrowserFrame } from "../BrowserFrame";
 import { Stage, InputDock, Surface } from "../stage";
 
 export const Scroll: React.FC = () => {
-  const t = useCurrentFrame() / useVideoConfig().fps;
+  const t = scrollTime(useCurrentFrame() / useVideoConfig().fps);
   const sy = lerp(t, [0, 0.8, 2.5, 2.9, 3.9], [0, 0, -430, -430, -220]);
   const sx = lerp(t, [0, 4.2, 5.2], [0, 0, -450]);
   return (

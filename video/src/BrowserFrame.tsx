@@ -94,7 +94,7 @@ export const BrowserFrame: React.FC<{
                 fontSize: 17,
               }}
             >
-              ↗
+              A
             </span>
             Launch assets
             <span style={{ marginLeft: "auto", opacity: 0.4 }}>×</span>

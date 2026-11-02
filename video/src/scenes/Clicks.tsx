@@ -1,3 +1,4 @@
+import { clickTime } from "../pacing";
 import React, { useEffect, useRef, useState } from "react";
 import {
   cancelRender,
@@ -9,7 +10,6 @@ import {
 import { C, Cursor, fontsReady, Key, lerp, tween } from "../design";
 import { Stage } from "../stage";
 import { BrowserFrame } from "../BrowserFrame";
-import { MouseVisual } from "../MouseVisual";
 
 const TEXT_LEFT = 310;
 const AssetCard: React.FC<{
@@ -31,15 +31,40 @@ const AssetCard: React.FC<{
   >
     <div
       style={{
-        width: 76,
-        height: 76,
-        border: "14px solid #a6d8ff77",
-        borderRadius: 19,
-        rotate: "-14deg",
-        marginLeft: 12,
-        marginTop: 4,
+        position: "absolute",
+        left: 22,
+        right: 22,
+        top: 20,
+        height: 116,
+        borderRadius: 12,
+        background: "#82b6e31b",
+        overflow: "hidden",
       }}
-    />
+    >
+      <div
+        style={{
+          position: "absolute",
+          width: 116,
+          height: 86,
+          border: "17px solid #a6d8ff77",
+          borderRadius: 22,
+          rotate: "-14deg",
+          left: 28,
+          top: 14,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          width: 100,
+          height: 100,
+          border: "17px solid #a6d8ff33",
+          borderRadius: "50%",
+          right: 40,
+          top: 28,
+        }}
+      />
+    </div>
     <div
       style={{
         position: "absolute",
@@ -56,7 +81,7 @@ const AssetCard: React.FC<{
 );
 
 export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
-  const t = useCurrentFrame() / useVideoConfig().fps + offset;
+  const t = clickTime(useCurrentFrame() / useVideoConfig().fps + offset);
   const wordRef = useRef<HTMLSpanElement>(null);
   const [handle] = useState(() => delayRender("Measure the selected word"));
   const [wordX, setWordX] = useState(730);
@@ -90,22 +115,12 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
     x = lerp(t, [2.7, 3.2], [265, wordX]);
     y = lerp(t, [2.7, 3.2], [503, 535]);
   } else if (t < 13.8) {
-    x = lerp(t, [9.5, 10.5], [wordX, 620]);
+    x = lerp(t, [9.5, 10.5], [wordX, 460]);
     y = lerp(t, [9.5, 10.5], [535, 720]);
   } else {
-    x = lerp(t, [13.8, 14.8], [620, 430]);
+    x = lerp(t, [13.8, 14.8], [460, 430]);
     y = lerp(t, [13.8, 14.8], [720, 810]);
   }
-  const mouseWord = tween(t, 6.7, 7.1) * (1 - tween(t, 9.3, 9.6));
-  const mouseAsset = tween(t, 10.8, 11.2) * (1 - tween(t, 13.6, 14));
-  const normalX = x + 205,
-    normalY = 630 + (y - 535) * (-10 / 275);
-  const mouseX =
-    normalX * (1 - mouseWord - mouseAsset) +
-    (wordX - 190) * mouseWord +
-    430 * mouseAsset;
-  const mouseY =
-    normalY * (1 - mouseWord - mouseAsset) + 570 * mouseWord + 680 * mouseAsset;
   const flight = lerp(t, [15.4, 16.65], [0, 1]);
   return (
     <Stage demo>
@@ -175,7 +190,7 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
         </span>
       </div>
       <AssetCard
-        title="Launch assets ↗"
+        title="Launch assets"
         color="#234879"
         style={{
           left: 310,
@@ -215,7 +230,7 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
         <div
           style={{
             position: "absolute",
-            left: menuWord ? wordX : 620,
+            left: menuWord ? wordX : 460,
             top: menuWord ? 535 : 705,
             width: 440,
             padding: 11,
@@ -225,14 +240,15 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
             border: "1px solid #7093b359",
             boxShadow: "0 22px 65px #0007",
             opacity: menuWord
-              ? 1 - tween(t, 9.3, 9.5)
-              : 1 - tween(t, 13.6, 13.8),
+              ? tween(t, 7.1, 7.3) * (1 - tween(t, 9.3, 9.5))
+              : tween(t, 11.2, 11.4) * (1 - tween(t, 13.6, 13.8)),
+            translate: `0 ${menuWord ? tween(t, 7.1, 7.3, 8, 0) : tween(t, 11.2, 11.4, 8, 0)}px`,
             zIndex: 20,
           }}
         >
           {(menuWord
             ? ["Copy", "Look Up", "Search the Web"]
-            : ["Open Link in New Tab", "Copy Link", "Save Link"]
+            : ["Copy Image", "Save Image As…", "Inspect Image"]
           ).map((label, i) => (
             <div
               key={label}
@@ -246,29 +262,12 @@ export const Clicks: React.FC<{ offset?: number }> = ({ offset = 0 }) => {
             >
               {label}
               <span style={{ float: "right", opacity: 0.35 }}>
-                {i === 0 ? (menuWord ? "⌘C" : "↗") : "⋯"}
+                {i === 0 ? (menuWord ? "⌘C" : "⋯") : "⋯"}
               </span>
             </div>
           ))}
         </div>
       ) : null}
-      <div
-        style={{
-          position: "absolute",
-          left: mouseX,
-          top: mouseY,
-          scale: 0.65,
-          transformOrigin: "top left",
-          rotate: "-9deg",
-          zIndex: 25,
-        }}
-      >
-        <MouseVisual
-          left={space}
-          middle={middle || (t >= 15.8 && t < 16.65)}
-          right={right}
-        />
-      </div>
       {t >= 15.4 && t < 16.9 ? (
         <div
           style={{
