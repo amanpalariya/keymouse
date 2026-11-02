@@ -32,7 +32,7 @@ export const Film: React.FC = () => {
         />
         <TransitionSeries.Sequence
           name="02 — Keyboard map / arrows + Space"
-          durationInFrames={8 * fps + Math.round(0.5 * fps)}
+          durationInFrames={7 * fps + Math.round(0.5 * fps)}
           premountFor={fps}
         >
           <Move />
@@ -46,7 +46,7 @@ export const Film: React.FC = () => {
         />
         <TransitionSeries.Sequence
           name="03 — Research a lake / copy, save, compare"
-          durationInFrames={22 * fps + Math.round(0.5 * fps)}
+          durationInFrames={18 * fps + Math.round(0.5 * fps)}
           premountFor={fps}
         >
           <Clicks />
@@ -74,7 +74,7 @@ export const Film: React.FC = () => {
         />
         <TransitionSeries.Sequence
           name="05 — Drag across, then reorder down"
-          durationInFrames={9 * fps + Math.round(0.5 * fps)}
+          durationInFrames={7 * fps + Math.round(0.5 * fps)}
           premountFor={fps}
         >
           <Drag />
@@ -87,7 +87,7 @@ export const Film: React.FC = () => {
           })}
         />
         <TransitionSeries.Sequence
-          name="06 — Every move, yours / 3D fly-out"
+          name="06 — KeyMouse / app icon and flying keys"
           durationInFrames={4 * fps}
           premountFor={fps}
         >
@@ -96,13 +96,13 @@ export const Film: React.FC = () => {
       </TransitionSeries>
       <Audio
         name="In Full Control — original music, rustle removed"
-        src={staticFile("audio/in-full-control-original-clean-v7.wav")}
+        src={staticFile("audio/in-full-control-original-clean-v8.wav")}
         premountFor={fps}
         volume={0.8}
       />
       <Audio
         name="Designed sound — soft tine accents / no swipes"
-        src={staticFile("audio/workflow-accents-v7.wav")}
+        src={staticFile("audio/workflow-accents-v8.wav")}
         premountFor={fps}
         volume={0.35}
       />

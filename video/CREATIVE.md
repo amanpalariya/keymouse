@@ -1,20 +1,20 @@
 # KeyMouse — In Full Control / V5
 
-66 seconds · 1920 × 1080 · 60 fps · 120 BPM
+59 seconds · 1920 × 1080 · 60 fps · 120 BPM
 
 A dark product film built around recognizable tasks. The application content
 uses the former title space. There are no large action headings or plus-sign
 separators. Tall windows extend below the frame, with compact input feedback
 beside the action and a small reference dock.
 
-| Time  | Use case          | Motion                                                                                    |
-| ----- | ----------------- | ----------------------------------------------------------------------------------------- |
-| 00–04 | Opener            | Flying keycaps, beveled cursor and shared upward exit                                     |
-| 04–12 | Keyboard overview | Neutral gray hardware, active highlights, fly-in, continuous camera drift and upward exit |
-| 12–34 | Research a lake   | Copy, save and compare; shorter travel and result holds                                   |
-| 34–53 | Photo workflow    | Continuous scrolling and precision retouching, paced faster                               |
-| 53–62 | Board             | Faster horizontal drag and vertical reorder                                               |
-| 62–66 | Closing           | Flying cursor and final lockup                                                            |
+| Time  | Use case        | Motion                                                |
+| ----- | --------------- | ----------------------------------------------------- |
+| 00–04 | Opener          | Flying keys and cursor                                |
+| 04–11 | Keyboard        | Neutral hardware and drifting camera                  |
+| 11–29 | Research a lake | Copy, save, compare; compressed waits between actions |
+| 29–48 | Photo workflow  | Continuous canvas scroll and retouch                  |
+| 48–55 | Board           | Right drag, brief release, then downward reorder      |
+| 55–59 | KeyMouse        | Actual app icon and name, surrounded by floating keys |
 
 ## Current controls and visual decisions
 
@@ -73,8 +73,8 @@ The existing tonal UI accents remain quiet. No swipes or movement effects.
 
 Current 48 kHz stereo assets:
 
-- `public/audio/in-full-control-original-clean-v7.wav`
-- `public/audio/workflow-accents-v7.wav`
+- `public/audio/in-full-control-original-clean-v8.wav`
+- `public/audio/workflow-accents-v8.wav`
 
 `python scripts/score.py` rebuilds these tracks with numpy. Unique asset names
 ensure Studio loads the replacement rather than cached audio.
@@ -114,3 +114,12 @@ floating keys without extra copy, a coordinated opener/keyboard fly-through,
 neutral hardware, continuous camera drift, and directional window slides.
 Movement clocks are accelerated together with their input feedback and sounds.
 The music retains its original tempo; UI accents are retimed to the new cut.
+
+## Ending and gap refinement
+
+The final lockup uses `public/icon.png`, verified byte-for-byte against
+`Sources/KeyMouse/Resources/AppIcon.png`. The slogan and final cursor are
+replaced by a centered icon/name composition. Flying keys continue the opener.
+Piecewise action clocks remove dead time without uniformly speeding gestures;
+all targets, selection, reorder behavior, input hints and audio accents follow
+the same clocks. V6 remains unchanged.

@@ -1,14 +1,14 @@
 """Original KeyMouse score + V5 soundtrack: original music with noise percussion removed. No sampled or third-party audio.
 
 Rebuild with Python 3 and numpy: python scripts/score.py
-66 seconds, 120 BPM, D minor, 48 kHz stereo. Deterministic synthesis.
+59 seconds, 120 BPM, D minor, 48 kHz stereo. Deterministic synthesis.
 """
 from pathlib import Path
 import wave
 import numpy as np
 
 SR = 48000
-DURATION = 66
+DURATION = 59
 N = SR * DURATION
 music = np.zeros((N, 2), dtype=np.float64)
 effects = np.zeros_like(music)
@@ -22,11 +22,13 @@ def time(duration):
 def place(track, signal, at, gain=1, pan=0):
     if track is effects:
         if at < 4: pass
-        elif at < 14: at = 4 + (at-4)/1.25
-        elif at < 40: at = 12 + (at-14)*22/26
-        elif at < 62: at = 34 + (at-40)*19/22
-        elif at < 74: at = 53 + (at-62)*9/12
-        else: at = 62 + (at-74)
+        elif at < 14: at = 4 + np.interp(at-4,[0,7,10.625],[0,5.6,7.5])
+        elif at < 40: at = 11 + np.interp(at-14,[0,3.4,5,6.4,7.7,8.5,10.5,12.5,13.7,15.5,18.8,20,21.5,22.2,24,26],[0,3,3.4,4.6,5.1,6.2,7.2,8.8,9.2,10.5,11,12.4,13,14.1,15.4,18])
+        elif at < 62: at = 29 + (at-40)*19/22
+        elif at < 74:
+            old=np.interp(at-62,[0,1.15,2.15,5.4,6.4,8,12],[0,1.15,1.15,4.4,4.4,6,10])
+            at=48+np.interp(old,[0,.85,1.25,3.6,3.9,4.4,6.5,6.9,8.6,8.9,10],[0,.65,.9,2.65,3,3.25,3.4,3.65,5.3,5.6,7])
+        else: at = 55 + (at-74)
     start = int(at * SR)
     offset = max(0, -start)
     start = max(0, start)
@@ -142,5 +144,5 @@ def write(name,track,peak):
     with wave.open(str(out),'wb') as wav:
         wav.setnchannels(2);wav.setsampwidth(2);wav.setframerate(SR);wav.writeframes(pcm.tobytes())
     print(f'{name}: {DURATION}s stereo, peak {20*np.log10(np.max(np.abs(track))):.1f} dBFS, RMS {20*np.log10(np.sqrt(np.mean(track**2))):.1f} dBFS')
-write('in-full-control-original-clean-v7.wav',music,.70)
-write('workflow-accents-v7.wav',effects,.32)
+write('in-full-control-original-clean-v8.wav',music,.70)
+write('workflow-accents-v8.wav',effects,.32)

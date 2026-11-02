@@ -1,3 +1,4 @@
+import { keyboardTime } from "../pacing";
 import React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Cursor, lerp, tween, inputFeedback } from "../design";
@@ -6,7 +7,7 @@ import { Keyboard } from "../Keyboard";
 import { MouseVisual } from "../MouseVisual";
 
 export const Move: React.FC = () => {
-  const t = (useCurrentFrame() / useVideoConfig().fps) * 1.25;
+  const t = keyboardTime(useCurrentFrame() / useVideoConfig().fps);
   // Stable overview: pointer movement and three clicks, then time to read.
   const cursorX = lerp(
     t,
